@@ -1,0 +1,1380 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Sei Bello — Studio Pielęgnacji Włosów w Zatorze. Strzyżenia, koloryzacje, regeneracja i prostowanie. Rezerwacje online (Booksy)." />
+  <meta name="theme-color" content="#0b0f1a" />
+
+  <title>Sei Bello — Studio Pielęgnacji Włosów | Zator</title>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Sei Bello — Studio Pielęgnacji Włosów | Zator" />
+  <meta property="og:description" content="Nowoczesne techniki koloryzacji i pielęgnacji. Umów wizytę online lub zadzwoń." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pl_PL" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg:#0b0f1a;
+      --panel:rgba(255,255,255,.06);
+      --panel2:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.72);
+      --muted2:rgba(255,255,255,.60);
+      --brand:#c9a56a;
+      --brand2:#7dd3fc;
+      --stroke:rgba(255,255,255,.14);
+      --shadow:0 14px 40px rgba(0,0,0,.45);
+      --radius:20px;
+      --radius2:28px;
+      --max:1120px;
+      --focus: 0 0 0 3px rgba(201,165,106,.35);
+    }
+
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(125,211,252,.22), transparent 65%),
+        radial-gradient(900px 500px at 95% 10%, rgba(201,165,106,.18), transparent 60%),
+        radial-gradient(800px 800px at 50% 120%, rgba(168,85,247,.12), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.55;
+      overflow-x:hidden;
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+
+    .container{ max-width:var(--max); margin:0 auto; padding:0 18px; }
+
+    /* Top bar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(14px);
+      background: linear-gradient(to bottom, rgba(11,15,26,.78), rgba(11,15,26,.35));
+      border-bottom:1px solid var(--stroke);
+    }
+    .topbar__inner{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+      gap:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; min-width:220px;
+    }
+    .brand__mark{
+      width:40px; height:40px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(201,165,106,.95), rgba(125,211,252,.85));
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .brand__mark:after{
+      content:"";
+      position:absolute; inset:1px;
+      border-radius:13px;
+      background: radial-gradient(70% 70% at 30% 30%, rgba(255,255,255,.35), transparent 55%);
+      mix-blend-mode: overlay;
+      opacity:0; /* logo.jpeg będzie na wierzchu; ustaw np. 0.25 jeśli chcesz delikatny połysk */
+      pointer-events:none;
+    }
+    .brand__logo{
+      width:100%;
+      height:100%;
+      object-fit:cover; /* wypełnia cały kwadrat (może lekko przyciąć) */
+      padding:0;
+    }
+    .brand__title{
+      display:flex; flex-direction:column; gap:1px;
+    }
+    .brand__title strong{
+      font-family:"Playfair Display", Georgia, serif;
+      letter-spacing:.2px;
+      font-size:16px;
+    }
+    .brand__title span{
+      font-size:12px; color:var(--muted2);
+    }
+
+    nav{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .nav__link{
+      font-size:13px; color:var(--muted);
+      padding:10px 10px;
+      border-radius:12px;
+      transition: background .2s ease, color .2s ease;
+      white-space:nowrap;
+    }
+    .nav__link:hover{ background:var(--panel); color:var(--text); }
+
+    .nav__cta{
+      padding:10px 14px;
+      border-radius:999px;
+      background: linear-gradient(135deg, rgba(201,165,106,.95), rgba(201,165,106,.78));
+      color:#10131d;
+      font-weight:800;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 10px 26px rgba(201,165,106,.18);
+      transition: transform .15s ease, filter .2s ease;
+      white-space:nowrap;
+    }
+    .nav__cta:hover{ transform: translateY(-1px); filter: brightness(1.06); }
+
+    .nav__ghost{
+      padding:10px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:700;
+      transition: transform .15s ease, background .2s ease, border-color .2s ease;
+      white-space:nowrap;
+    }
+    .nav__ghost:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
+
+    /* Mobile */
+    .burger{
+      display:none;
+      width:44px; height:44px;
+      border-radius:14px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      align-items:center; justify-content:center;
+      cursor:pointer;
+    }
+    .burger:focus{ outline:none; box-shadow:var(--focus); }
+    .burger svg{ width:20px; height:20px; }
+
+    .mobile{ display:none; padding:0 0 14px; }
+    .mobile__panel{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      border-radius: var(--radius);
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+
+    /* Hero */
+    .hero{ padding:44px 0 18px; }
+    .hero__grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:22px;
+      align-items:stretch;
+    }
+    .card{
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .hero__copy{ padding:34px; }
+    .badge{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .badge .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: var(--brand2);
+      box-shadow: 0 0 0 4px rgba(125,211,252,.16);
+    }
+    h1{
+      margin:14px 0 10px;
+      font-family:"Playfair Display", Georgia, serif;
+      font-size:44px;
+      line-height:1.1;
+      letter-spacing:.2px;
+    }
+    .lead{ color:var(--muted); font-size:15px; max-width:60ch; }
+
+    .hero__actions{ display:flex; gap:12px; margin-top:18px; flex-wrap:wrap; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:10px;
+      padding:12px 16px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:700;
+      transition: transform .15s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.22); }
+    .btn--primary{
+      background: linear-gradient(135deg, rgba(201,165,106,.95), rgba(201,165,106,.78));
+      color:#0b0f1a;
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 12px 30px rgba(201,165,106,.16);
+      font-weight:900;
+    }
+    .btn--primary:hover{ background: linear-gradient(135deg, rgba(201,165,106,1), rgba(201,165,106,.82)); }
+    .btn:focus{ outline:none; box-shadow:var(--focus); }
+
+    .hero__stats{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:22px;
+    }
+    .stat{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius: 18px;
+      padding:12px;
+    }
+    .stat b{ display:block; font-size:16px; }
+    .stat span{ color:var(--muted2); font-size:12px; }
+
+    .hero__visual{ min-height: 420px; position:relative; }
+    .hero__visual .img{
+      position:absolute; inset:0;
+      background:
+        
+        url("./wlasciciel/wlasciciel3.jpeg") center/cover;
+      filter: saturate(1.03);
+    }
+    .hero__visual .overlay{
+      position:absolute; inset:0;
+      background:
+        radial-gradient(520px 320px at 20% 25%, rgba(125,211,252,.25), transparent 55%),
+        radial-gradient(580px 360px at 65% 65%, rgba(201,165,106,.25), transparent 55%);
+      pointer-events:none;
+    }
+
+    .floating{
+      position:absolute;
+      left:18px; right:18px; bottom:18px;
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(11,15,26,.55);
+      backdrop-filter: blur(14px);
+      padding:14px;
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .floating .pill{ display:flex; flex-direction:column; gap:2px; }
+    .floating .pill b{ font-size:14px; }
+    .floating .pill span{ font-size:12px; color:var(--muted2); }
+    .floating .mini{
+      display:flex; gap:8px; align-items:center;
+      font-size:12px; color:var(--muted);
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      white-space:nowrap;
+    }
+
+    /* Sections */
+    section{ padding:36px 0; }
+    .section__head{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:16px;
+      margin-bottom:14px;
+    }
+    .section__head h2{
+      margin:0;
+      font-family:"Playfair Display", Georgia, serif;
+      font-size:30px;
+      letter-spacing:.2px;
+    }
+    .section__head p{ margin:0; color:var(--muted); max-width:66ch; font-size:14px; }
+
+    .grid3{ display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; }
+    .grid2{ display:grid; grid-template-columns:repeat(2, 1fr); gap:14px; }
+
+    .tile{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius);
+      padding:16px;
+      transition: transform .15s ease, background .2s ease, border-color .2s ease;
+    }
+    .tile:hover{ transform: translateY(-2px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.20); }
+    .tile h3{ margin:8px 0 6px; font-size:15px; }
+    .tile p{ margin:0; color:var(--muted); font-size:13px; }
+    .icon{
+      width:42px; height:42px; border-radius:16px;
+      display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg, rgba(125,211,252,.22), rgba(201,165,106,.18));
+      border:1px solid rgba(255,255,255,.14);
+    }
+
+    /* About */
+    .about{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      align-items:stretch;
+    }
+    .about__copy{ padding:18px; }
+    .about__copy h3{ margin:0 0 8px; font-size:16px; }
+    .about__copy p{ margin:0; color:var(--muted); font-size:13px; }
+
+    .portraits{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      padding:18px;
+    }
+    .portrait{
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+    }
+    .portrait img{ width:100%; height:100%; object-fit:cover; aspect-ratio: 3/4; }
+
+    /* Pricing (Booksy) */
+    .pricing{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    details.acc{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius2);
+      overflow:hidden;
+    }
+    details.acc[open]{ background: rgba(255,255,255,.05); }
+    details.acc summary{
+      list-style:none;
+      cursor:pointer;
+      padding:16px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    details.acc summary::-webkit-details-marker{ display:none; }
+    .acc__title{ display:flex; align-items:center; gap:10px; }
+    .acc__title b{ font-size:14px; }
+    .acc__title span{ font-size:12px; color:var(--muted2); }
+    .chev{
+      width:36px; height:36px;
+      display:flex; align-items:center; justify-content:center;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      transition: transform .18s ease;
+      flex:0 0 auto;
+    }
+    details[open] .chev{ transform: rotate(180deg); }
+
+    .acc__body{ padding:0 18px 16px; border-top:1px solid rgba(255,255,255,.10); }
+
+    .priceRow{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      padding:12px 0;
+      border-bottom:1px dashed rgba(255,255,255,.12);
+    }
+    .priceRow:last-child{ border-bottom:0; }
+
+    .svc{ display:flex; flex-direction:column; gap:2px; }
+    .svc b{ font-size:13px; }
+    .svc span{ font-size:12px; color:var(--muted2); }
+
+    .money{ text-align:right; display:flex; flex-direction:column; gap:2px; align-items:flex-end; }
+    .money b{ font-size:13px; }
+    .money .old{ font-size:12px; color:var(--muted2); text-decoration: line-through; }
+
+    .note{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      border-radius: var(--radius2);
+      padding:16px 18px;
+      color: var(--muted);
+      font-size:13px;
+    }
+
+    /* Gallery */
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:10px;
+    }
+    .g{
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      cursor:pointer;
+      position:relative;
+    }
+    .g img{ width:100%; height:100%; object-fit:cover; aspect-ratio: 4/3; transform: scale(1.01); transition: transform .3s ease; }
+    .g:hover img{ transform: scale(1.05); }
+    .g:after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, transparent 55%, rgba(11,15,26,.55));
+      opacity:.65;
+    }
+    .g span{
+      position:absolute; left:12px; bottom:10px; z-index:2;
+      font-size:12px; color:rgba(255,255,255,.88);
+      text-shadow: 0 10px 30px rgba(0,0,0,.5);
+    }
+    .g1{ grid-column: span 6; }
+    .g2{ grid-column: span 3; }
+    .g3{ grid-column: span 3; }
+    .g4{ grid-column: span 4; }
+    .g5{ grid-column: span 4; }
+    .g6{ grid-column: span 4; }
+
+    /* Testimonials */
+    .quote{
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      padding:18px;
+    }
+    .quote p{ margin:0 0 10px; color:var(--muted); }
+    .quote .who{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .quote .who b{ font-size:13px; }
+    .stars{ color:rgba(201,165,106,.95); font-size:13px; letter-spacing:1px; }
+
+    /* Contact */
+    .contact{
+      display:grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap:14px;
+    }
+    .info{
+      padding:18px;
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .info .row{ display:flex; gap:12px; align-items:flex-start; }
+    .info .row .icon{ width:40px; height:40px; border-radius:14px; }
+    .info .row b{ display:block; font-size:13px; }
+    .info .row span{ color:var(--muted); font-size:13px; }
+
+    .form{
+      padding:18px;
+      border-radius: var(--radius2);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+    }
+    .fields{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    label{ display:block; font-size:12px; color:var(--muted); margin:0 0 6px; }
+    input, textarea{
+      width:100%;
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(11,15,26,.55);
+      color:var(--text);
+      font: inherit;
+      outline:none;
+      transition: box-shadow .15s ease, border-color .2s ease;
+    }
+    input:focus, textarea:focus{ box-shadow: var(--focus); border-color: rgba(201,165,106,.55); }
+    textarea{ min-height:120px; resize:vertical; }
+    .form__actions{ display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-top:10px; }
+    .small{ font-size:12px; color:var(--muted2); }
+
+    /* Footer */
+    footer{ border-top:1px solid var(--stroke); padding:22px 0; color:var(--muted2); }
+    .foot{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+    .social{ display:flex; gap:10px; flex-wrap:wrap; }
+    .chip{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      transition: background .2s ease, color .2s ease;
+    }
+    .chip:hover{ background: rgba(255,255,255,.07); color:var(--text); }
+
+    /* Modal */
+    .modal{
+      position:fixed; inset:0; z-index:80;
+      display:none;
+      place-items:center;
+      background: rgba(0,0,0,.65);
+      padding:18px;
+    }
+    .modal[aria-hidden="false"]{ display:grid; }
+    .modal__inner{
+      max-width: 980px;
+      width:min(980px, 96vw);
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(11,15,26,.70);
+      backdrop-filter: blur(16px);
+      overflow:hidden;
+      box-shadow: 0 30px 90px rgba(0,0,0,.6);
+    }
+    .modal__top{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.12);
+    }
+    .modal__top b{ font-size:13px; }
+    .modal__close{
+      width:40px; height:40px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      cursor:pointer;
+    }
+    .modal__close:focus{ outline:none; box-shadow:var(--focus); }
+    .modal__img{ width:100%; height:auto; display:block; background:#0b0f1a; }
+
+    /* Reveal */
+    .reveal{ opacity:0; transform: translateY(10px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.is-visible{ opacity:1; transform: translateY(0); }
+
+    /* Responsiveness */
+    @media (max-width: 980px){
+      h1{ font-size:38px; }
+      .hero__grid{ grid-template-columns:1fr; }
+      .hero__visual{ min-height: 360px; }
+      .grid3{ grid-template-columns:1fr; }
+      .grid2{ grid-template-columns:1fr; }
+      .contact{ grid-template-columns: 1fr; }
+      .about{ grid-template-columns:1fr; }
+      .pricing{ grid-template-columns:1fr; }
+      .portraits{ grid-template-columns:repeat(3, 1fr); }
+    }
+    @media (max-width: 760px){
+      nav{ display:none; }
+      .burger{ display:flex; }
+      .mobile{ display:block; }
+      .hero__copy{ padding:22px; }
+      .hero__stats{ grid-template-columns:1fr; }
+      .fields{ grid-template-columns:1fr; }
+      h1{ font-size:34px; }
+      .gallery{ gap:8px; }
+      .g1{ grid-column: span 12; }
+      .g2,.g3{ grid-column: span 6; }
+      .g4,.g5,.g6{ grid-column: span 12; }
+      .portraits{ grid-template-columns:1fr; }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      html{ scroll-behavior:auto; }
+      .reveal{ transition:none; }
+      .tile, .btn, .g img, .chev{ transition:none; }
+    }
+  </style>
+
+  <!-- LocalBusiness schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HairSalon",
+    "name": "Sei Bello — Studio Pielęgnacji Włosów",
+    "description": "Strzyżenia, koloryzacje, regeneracja i prostowanie włosów. Rezerwacje online (Booksy).",
+    "telephone": "+48 575 440 253",
+    "email": "packa36@op.pl",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Wadowicka 61B",
+      "addressLocality": "Zator",
+      "postalCode": "32-640",
+      "addressCountry": "PL"
+    },
+    "sameAs": [
+      "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile",
+      "https://www.facebook.com/profile.php?id=100093185689563",
+      "https://www.instagram.com/sei_bello97"
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="container">
+      <div class="topbar__inner">
+        <a class="brand" href="#home" aria-label="Przejdź do początku">
+          <div class="brand__mark">
+            <!-- LOGO: wrzuć plik logo.jpeg do tego samego folderu co index.html -->
+            <img class="brand__logo" src="logo.jpeg" alt="Logo Sei Bello" />
+          </div>
+          <div class="brand__title">
+            <strong>Sei Bello</strong>
+            <span>Studio Pielęgnacji Włosów • Zator</span>
+          </div>
+        </a>
+
+        <nav aria-label="Główna nawigacja">
+          <a class="nav__link" href="#oferta">Oferta</a>
+          
+          <a class="nav__link" href="#cennik">Cennik</a>
+          <a class="nav__link" href="#galeria">Galeria</a>
+          <a class="nav__link" href="#opinie">Opinie</a>
+          <a class="nav__link" href="#kontakt">Kontakt</a>
+          <a class="nav__ghost" href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile" target="_blank" rel="noopener">Rezerwuj (Booksy)</a>
+          <a class="nav__cta" href="tel:+48575440253">Zadzwoń: 575 440 253</a>
+        </nav>
+
+        <button class="burger" type="button" aria-label="Otwórz menu" aria-expanded="false" id="burger">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mobile" id="mobile" hidden>
+        <div class="mobile__panel" role="dialog" aria-label="Menu">
+          <a class="nav__link" href="#oferta">Oferta</a>
+          
+          <a class="nav__link" href="#cennik">Cennik</a>
+          <a class="nav__link" href="#galeria">Galeria</a>
+          <a class="nav__link" href="#opinie">Opinie</a>
+          <a class="nav__link" href="#kontakt">Kontakt</a>
+          <a class="nav__ghost" href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile" target="_blank" rel="noopener">Rezerwuj (Booksy)</a>
+          <a class="nav__cta" href="tel:+48575440253">Zadzwoń: 575 440 253</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="container">
+        <div class="hero__grid">
+          <div class="card reveal">
+            <div class="hero__copy">
+              <div class="badge"><span class="dot" aria-hidden="true"></span> Rezerwacje online • Booksy • szybkie terminy</div>
+              <h1>Koloryzacje i pielęgnacja, które robią efekt — i trzymają kondycję.</h1>
+              <p class="lead">Sei Bello to studio w Zatorze, gdzie stawiamy na nowoczesne techniki koloryzacji, bezpieczne rozjaśnianie i świadomą pielęgnację. Strzyżenia damskie i męskie, regeneracja, prostowanie.</p>
+
+              <div class="hero__actions">
+                <a class="btn btn--primary" href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile" target="_blank" rel="noopener">Umów na Booksy</a>
+                <a class="btn" href="#cennik">Zobacz cennik</a>
+                <a class="btn" href="#galeria">Zobacz realizacje</a>
+              </div>
+
+              <div class="hero__stats" aria-label="Najważniejsze liczby">
+                <div class="stat"><b>★ 5.0</b><span>Ocena na Booksy</span></div>
+                <div class="stat"><b>84</b><span>Opinie klientów</span></div>
+                <div class="stat"><b>Parking • Wi‑Fi</b><span>Udogodnienia w salonie</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card hero__visual reveal" aria-label="Zdjęcie realizacji">
+            <div class="img" role="img" aria-label="Fryzura — zdjęcie z galerii"></div>
+            <div class="overlay" aria-hidden="true"></div>
+            <div class="floating">
+              <div class="pill">
+                <b>Sei Bello • Zator</b>
+                <span>Wadowicka 61B • 32-640</span>
+              </div>
+              <a class="mini" href="#kontakt" aria-label="Przejdź do kontaktu">📍 Dojazd i kontakt</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="oferta">
+      <div class="container">
+        <div class="section__head reveal">
+          <div>
+            <h2>Oferta</h2>
+            <p>Najczęściej wybierane usługi — dobieramy je do kondycji włosów i efektu, jaki chcesz osiągnąć.</p>
+          </div>
+          <a class="btn" href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile" target="_blank" rel="noopener">Sprawdź terminy</a>
+        </div>
+
+        <div class="grid3">
+          <article class="tile reveal">
+            <div class="icon" aria-hidden="true">🎨</div>
+            <h3>Koloryzacja &amp; metamorfozy</h3>
+            <p>Koloryzacja, tonowanie, refleksy/sombre, balayage. Stawiamy na naturalne przejścia i zdrowy połysk.</p>
+          </article>
+          <article class="tile reveal">
+            <div class="icon" aria-hidden="true">✨</div>
+            <h3>Regeneracja i pielęgnacja</h3>
+            <p>Zabiegi regenerujące (np. botox) oraz dobór pielęgnacji pod porowatość i potrzeby Twoich włosów.</p>
+          </article>
+          <article class="tile reveal">
+            <div class="icon" aria-hidden="true">✂️</div>
+            <h3>Strzyżenia damskie &amp; męskie</h3>
+            <p>Cięcie dopasowane do kształtu twarzy i stylu. W wersji klasycznej lub z odświeżeniem formy.</p>
+          </article>
+        </div>
+
+        <div style="height:14px"></div>
+
+        <div class="grid3">
+          <article class="tile reveal">
+            <div class="icon" aria-hidden="true">🧴</div>
+            <h3>Prostowanie</h3>
+            <p>Nanoplastia i bioplastia — konsultacja i dobór metody pod strukturę i historię włosów.</p>
+          </article>
+          <article class="tile reveal">
+            <div class="icon" aria-hidden="true">💫</div>
+            <h3>Fryzury okolicznościowe</h3>
+            <p>Upięcia, fale, stylizacje na wyjścia, sesje i uroczystości.</p>
+          </article>
+          <article class="tile reveal">
+            <div class="icon" aria-hidden="true">🧔</div>
+            <h3>Usługi męskie</h3>
+            <p>Klasyczne strzyżenie, włosy średnie/długie oraz cover męski (szybka usługa odświeżenia).</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    
+
+    <section id="cennik">
+      <div class="container">
+        <div class="section__head reveal">
+          <div>
+            <h2>Cennik</h2>
+            <p>Cennik przepisany z Booksy. Ceny i warianty (np. długość/gęstość) mogą się zmieniać — najaktualniejsze zawsze w rezerwacji.</p>
+          </div>
+          <a class="btn btn--primary" href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile" target="_blank" rel="noopener">Zobacz i umów</a>
+        </div>
+
+        <div class="pricing">
+          <details class="acc reveal" open>
+            <summary>
+              <div class="acc__title"><div class="icon" aria-hidden="true" style="width:36px;height:36px;border-radius:14px">⭐</div><div><b>Popularne usługi</b><br><span>Najczęściej wybierane</span></div></div>
+              <div class="chev" aria-hidden="true">⌄</div>
+            </summary>
+            <div class="acc__body">
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie męskie klasyczne</b><span>30 min</span></div>
+                <div class="money"><b>50,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie damskie + mycie + stylizacja</b><span>1 godz.</span></div>
+                <div class="money"><b>70,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie damskie — włosy krótkie (do linii uszu)</b><span>1 godz.</span></div>
+                <div class="money"><b>80,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie damskie — włosy średnie/długie</b><span>1 godz. 30 min</span></div>
+                <div class="money"><b>100,00 zł</b></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc reveal">
+            <summary>
+              <div class="acc__title"><div class="icon" aria-hidden="true" style="width:36px;height:36px;border-radius:14px">🧔</div><div><b>Usługi męskie</b><br><span>4 usługi</span></div></div>
+              <div class="chev" aria-hidden="true">⌄</div>
+            </summary>
+            <div class="acc__body">
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie męskie klasyczne</b><span>30 min</span></div>
+                <div class="money"><b>50,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie męskie — włosy średnie</b><span>1 godz.</span></div>
+                <div class="money"><b>65,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie męskie — włosy długie</b><span>1 godz.</span></div>
+                <div class="money"><b>75,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Cover męski</b><span>15 min</span></div>
+                <div class="money"><span class="old">40,00 zł</span><b>34,00 zł</b></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc reveal">
+            <summary>
+              <div class="acc__title"><div class="icon" aria-hidden="true" style="width:36px;height:36px;border-radius:14px">✂️</div><div><b>Usługi damskie</b><br><span>Strzyżenia i stylizacje</span></div></div>
+              <div class="chev" aria-hidden="true">⌄</div>
+            </summary>
+            <div class="acc__body">
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie damskie + mycie + stylizacja</b><span>1 godz.</span></div>
+                <div class="money"><b>70,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie damskie — włosy krótkie (do linii uszu)</b><span>1 godz.</span></div>
+                <div class="money"><b>80,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie damskie — włosy średnie/długie</b><span>1 godz. 30 min</span></div>
+                <div class="money"><b>100,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie damskie na prosto maszynką (bez mycia)</b><span>30 min</span></div>
+                <div class="money"><b>50,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Strzyżenie grzywki</b><span>15 min</span></div>
+                <div class="money"><span class="old">15,00 zł+</span><b>12,75 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Mycie + modelowanie / prostowanie</b><span>1 godz. • warianty zależne od długości</span></div>
+                <div class="money"><b>70,00 zł+</b><span class="small">(średnie/długie: 60,00 zł+)</span></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc reveal">
+            <summary>
+              <div class="acc__title"><div class="icon" aria-hidden="true" style="width:36px;height:36px;border-radius:14px">🎨</div><div><b>Koloryzacja</b><br><span>Największy wybór usług</span></div></div>
+              <div class="chev" aria-hidden="true">⌄</div>
+            </summary>
+            <div class="acc__body">
+              <div class="priceRow">
+                <div class="svc"><b>Koloryzacja włosów</b><span>2 godz. • warianty wg długości</span></div>
+                <div class="money"><span class="old">185,00 zł</span><b>157,25 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Koloryzacja włosów — krótkie (do linii uszu)</b><span>2 godz.</span></div>
+                <div class="money"><span class="old">210,00 zł</span><b>178,50 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Koloryzacja włosów — średnie (do ramion)</b><span>2 godz.</span></div>
+                <div class="money"><span class="old">250,00 zł+</span><b>212,50 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Koloryzacja włosów — długie/gęste</b><span>2 godz.</span></div>
+                <div class="money"><span class="old">230,00 zł</span><b>195,50 zł</b></div>
+              </div>
+
+              <div class="priceRow">
+                <div class="svc"><b>Farbowanie — odrost</b><span>1 godz. 30 min</span></div>
+                <div class="money"><span class="old">180,00 zł</span><b>153,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Farbowanie — odrost (wariant)</b><span>2 godz.</span></div>
+                <div class="money"><span class="old">200,00 zł</span><b>170,00 zł</b></div>
+              </div>
+
+              <div class="priceRow">
+                <div class="svc"><b>Metamorfoza koloru</b><span>5 godz. • warianty wg długości</span></div>
+                <div class="money"><span class="old">500,00 zł+</span><b>425,00 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Metamorfoza koloru — średnie (do ramion)</b><span>5 godz. 30 min</span></div>
+                <div class="money"><span class="old">600,00 zł+</span><b>510,00 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Metamorfoza koloru — długie</b><span>5 godz. 30 min</span></div>
+                <div class="money"><span class="old">700,00 zł+</span><b>595,00 zł+</b></div>
+              </div>
+
+              <div class="priceRow">
+                <div class="svc"><b>Przyciemnianie koloru blond + strzyżenie</b><span>2 godz. • warianty</span></div>
+                <div class="money"><span class="old">300,00 zł</span><b>255,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Przyciemnianie blond + strzyżenie — średnie (do ramion)</b><span>2 godz.</span></div>
+                <div class="money"><span class="old">280,00 zł+</span><b>238,00 zł+</b></div>
+              </div>
+
+              <div class="priceRow">
+                <div class="svc"><b>Tonowanie + strzyżenie damskie</b><span>1 godz. 30 min • warianty</span></div>
+                <div class="money"><span class="old">180,00 zł</span><b>153,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Tonowanie + strzyżenie (wariant)</b><span>2 godz.</span></div>
+                <div class="money"><span class="old">200,00 zł</span><b>170,00 zł</b></div>
+              </div>
+
+              <div class="priceRow">
+                <div class="svc"><b>Rozjaśnianie — odrost</b><span>3 godz. • warianty wg długości</span></div>
+                <div class="money"><span class="old">280,00 zł</span><b>238,00 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Rozjaśnianie odrost — krótkie</b><span>4 godz.</span></div>
+                <div class="money"><span class="old">390,00 zł+</span><b>331,50 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Rozjaśnianie odrost — długie</b><span>4 godz.</span></div>
+                <div class="money"><span class="old">350,00 zł+</span><b>297,50 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Rozjaśnianie — średnie</b><span>4 godz.</span></div>
+                <div class="money"><span class="old">450,00 zł+</span><b>382,50 zł+</b></div>
+              </div>
+
+              <div class="priceRow">
+                <div class="svc"><b>Refleksy / sombre</b><span>4 godz. • warianty wg długości</span></div>
+                <div class="money"><span class="old">450,00 zł+</span><b>382,50 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Refleksy / sombre — długie/gęste</b><span>4 godz.</span></div>
+                <div class="money"><span class="old">390,00 zł+</span><b>331,50 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Refleksy / sombre — średnie</b><span>4 godz.</span></div>
+                <div class="money"><span class="old">420,00 zł+</span><b>357,00 zł+</b></div>
+              </div>
+
+              <div class="priceRow">
+                <div class="svc"><b>Dekoloryzacja włosów</b><span>4 godz. • warianty</span></div>
+                <div class="money"><span class="old">450,00 zł</span><b>382,50 zł</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Dekoloryzacja — długie/gęste</b><span>4 godz.</span></div>
+                <div class="money"><span class="old">420,00 zł+</span><b>357,00 zł+</b></div>
+              </div>
+
+              <div class="priceRow">
+                <div class="svc"><b>Rozjaśnianie — globalny blond</b><span>4 godz. • warianty wg długości</span></div>
+                <div class="money"><span class="old">380,00 zł+</span><b>323,00 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Globalny blond — średnie</b><span>4 godz.</span></div>
+                <div class="money"><span class="old">420,00 zł+</span><b>357,00 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Globalny blond — długie</b><span>4 godz. 30 min</span></div>
+                <div class="money"><span class="old">450,00 zł</span><b>382,50 zł</b></div>
+              </div>
+
+              <div class="priceRow">
+                <div class="svc"><b>Balayage</b><span>4 godz. • warianty wg długości</span></div>
+                <div class="money"><span class="old">380,00 zł+</span><b>323,00 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Balayage — cienkie do ramion</b><span>4 godz.</span></div>
+                <div class="money"><span class="old">420,00 zł+</span><b>357,00 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Balayage — średnie</b><span>4 godz.</span></div>
+                <div class="money"><span class="old">450,00 zł</span><b>382,50 zł</b></div>
+              </div>
+
+              <div class="priceRow">
+                <div class="svc"><b>Refleksy na koronie</b><span>3 godz.</span></div>
+                <div class="money"><span class="old">330,00 zł+</span><b>280,50 zł+</b></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc reveal">
+            <summary>
+              <div class="acc__title"><div class="icon" aria-hidden="true" style="width:36px;height:36px;border-radius:14px">✨</div><div><b>Zabiegi regenerujące</b><br><span>1 usługa</span></div></div>
+              <div class="chev" aria-hidden="true">⌄</div>
+            </summary>
+            <div class="acc__body">
+              <div class="priceRow">
+                <div class="svc"><b>Regeneracja włosów — botox</b><span>1 godz. 30 min</span></div>
+                <div class="money"><span class="old">180,00 zł+</span><b>153,00 zł+</b></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc reveal">
+            <summary>
+              <div class="acc__title"><div class="icon" aria-hidden="true" style="width:36px;height:36px;border-radius:14px">🧴</div><div><b>Prostowanie</b><br><span>Nanoplastia &amp; Bioplastia</span></div></div>
+              <div class="chev" aria-hidden="true">⌄</div>
+            </summary>
+            <div class="acc__body">
+              <div class="priceRow">
+                <div class="svc"><b>Nanoplastia</b><span>3 godz. • warianty wg długości</span></div>
+                <div class="money"><span class="old">450,00 zł+</span><b>382,50 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Nanoplastia — średnie (do ramion)</b><span>4 godz.</span></div>
+                <div class="money"><span class="old">500,00 zł+</span><b>425,00 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Nanoplastia — długie (poza ramiona)</b><span>4 godz.</span></div>
+                <div class="money"><span class="old">600,00 zł+</span><b>510,00 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Bioplastia</b><span>3 godz.</span></div>
+                <div class="money"><span class="old">350,00 zł+</span><b>297,50 zł+</b></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc reveal">
+            <summary>
+              <div class="acc__title"><div class="icon" aria-hidden="true" style="width:36px;height:36px;border-radius:14px">💫</div><div><b>Fryzury okolicznościowe</b><br><span>3 usługi</span></div></div>
+              <div class="chev" aria-hidden="true">⌄</div>
+            </summary>
+            <div class="acc__body">
+              <div class="priceRow">
+                <div class="svc"><b>Upięcie / fryzura okolicznościowa</b><span>1 godz. 30 min</span></div>
+                <div class="money"><span class="old">150,00 zł+</span><b>127,50 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Loki / fale okolicznościowe</b><span>1 godz. 30 min</span></div>
+                <div class="money"><span class="old">180,00 zł+</span><b>153,00 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Fale Hollywood</b><span>2 godz.</span></div>
+                <div class="money"><span class="old">200,00 zł+</span><b>170,00 zł+</b></div>
+              </div>
+            </div>
+          </details>
+
+          <details class="acc reveal">
+            <summary>
+              <div class="acc__title"><div class="icon" aria-hidden="true" style="width:36px;height:36px;border-radius:14px">🌀</div><div><b>Trwała ondulacja</b><br><span>1 usługa • warianty</span></div></div>
+              <div class="chev" aria-hidden="true">⌄</div>
+            </summary>
+            <div class="acc__body">
+              <div class="priceRow">
+                <div class="svc"><b>Trwała ondulacja</b><span>2 godz.</span></div>
+                <div class="money"><span class="old">180,00 zł+</span><b>153,00 zł+</b></div>
+              </div>
+              <div class="priceRow">
+                <div class="svc"><b>Trwała ondulacja (wariant)</b><span>2 godz. 30 min</span></div>
+                <div class="money"><span class="old">200,00 zł+</span><b>170,00 zł+</b></div>
+              </div>
+            </div>
+          </details>
+
+          <div class="note reveal">
+            <b style="display:block; margin-bottom:6px; color:var(--text)">Uwaga</b>
+            Powyższy cennik jest „snapshotem” z Booksy (z widocznymi promocjami/"Zaoszczędź do 15%" tam, gdzie występują). Jeśli chcesz, żeby ceny zawsze były 100% aktualne, zostaw na stronie skrótowy cennik, a pełny cennik prowadź przyciskiem do Booksy.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="galeria">
+      <div class="container">
+        <div class="section__head reveal">
+          <div>
+            <h2>Galeria</h2>
+            <p>Realizacje z Twojego folderu <span class="small">/fryz</span>. Kliknij, aby powiększyć.</p>
+          </div>
+          <span class="small">Kliknij zdjęcie</span>
+        </div>
+
+        <div class="gallery">
+          <figure class="g g1 reveal" data-title="Realizacja 1">
+            <img alt="Fryzura — realizacja 1" src="./fryz/fryzura1.jpeg" />
+            <span>Realizacja</span>
+          </figure>
+          <figure class="g g2 reveal" data-title="Realizacja 2">
+            <img alt="Fryzura — realizacja 2" src="./fryz/fryzura2.jpeg" />
+            <span>Kolor</span>
+          </figure>
+          <figure class="g g3 reveal" data-title="Realizacja 3">
+            <img alt="Fryzura — realizacja 3" src="./fryz/fryzura3.jpeg" />
+            <span>Glow</span>
+          </figure>
+          <figure class="g g4 reveal" data-title="Realizacja 4">
+            <img alt="Fryzura — realizacja 4" src="./fryz/fryzura4.jpeg" />
+            <span>Fale</span>
+          </figure>
+          <figure class="g g5 reveal" data-title="Realizacja 5">
+            <img alt="Fryzura — realizacja 5" src="./fryz/fryzura5.jpeg" />
+            <span>Metamorfoza</span>
+          </figure>
+          <figure class="g g6 reveal" data-title="Realizacja 6">
+            <img alt="Fryzura — realizacja 6" src="./fryz/fryzura6.jpeg" />
+            <span>Efekt</span>
+          </figure>
+        </div>
+
+        <div class="small" style="margin-top:10px">* Jeśli Twoje pliki mają inne rozszerzenia, podmień <b>.jpeg</b> w ścieżkach na właściwe.</div>
+      </div>
+    </section>
+
+    <section id="opinie">
+      <div class="container">
+        <div class="section__head reveal">
+          <div>
+            <h2>Opinie</h2>
+            <p>Ocena 5.0 na podstawie 84 opinii (Booksy). Kilka przykładowych cytatów — możesz podmienić na własne screeny.</p>
+          </div>
+          <a class="btn" href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile" target="_blank" rel="noopener">Zobacz wszystkie</a>
+        </div>
+
+        <div class="grid3">
+          <div class="quote reveal">
+            <div class="stars" aria-label="5 gwiazdek">★★★★★</div>
+            <p>„Jestem bardzo zadowolony, zostanę stałym bywalcem :)”</p>
+            <div class="who"><b>Klient (Booksy)</b><span class="small">Strzyżenie męskie klasyczne</span></div>
+          </div>
+          <div class="quote reveal">
+            <div class="stars" aria-label="5 gwiazdek">★★★★★</div>
+            <p>„Wysoka jakość obsługi i pełen profesjonalizm, polecam.”</p>
+            <div class="who"><b>Klientka (Booksy)</b><span class="small">Strzyżenie + stylizacja</span></div>
+          </div>
+          <div class="quote reveal">
+            <div class="stars" aria-label="5 gwiazdek">★★★★★</div>
+            <p>„Polecam z całego serca.”</p>
+            <div class="who"><b>Klientka (Booksy)</b><span class="small">Koloryzacja</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="kontakt">
+      <div class="container">
+        <div class="section__head reveal">
+          <div>
+            <h2>Kontakt i rezerwacja</h2>
+            <p>Najszybciej: Booksy. Możesz też zadzwonić lub napisać maila.</p>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <a class="btn btn--primary" href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile" target="_blank" rel="noopener">Umów na Booksy</a>
+            <a class="btn" href="tel:+48575440253">Zadzwoń</a>
+          </div>
+        </div>
+
+        <div class="contact">
+          <div class="info reveal">
+            <div class="row">
+              <div class="icon" aria-hidden="true">📍</div>
+              <div>
+                <b>Adres</b>
+                <span>Wadowicka 61B, 32-640 Zator</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="icon" aria-hidden="true">📞</div>
+              <div>
+                <b>Telefon</b>
+                <span><a href="tel:+48575440253">575 440 253</a></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="icon" aria-hidden="true">✉️</div>
+              <div>
+                <b>E-mail</b>
+                <span><a href="mailto:packa36@op.pl">packa36@op.pl</a></span>
+              </div>
+            </div>
+
+            <div class="card" style="border-radius:var(--radius2)">
+              <iframe
+                title="Mapa — Sei Bello (Zator)"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                style="border:0; width:100%; height:260px; display:block"
+                src="https://www.google.com/maps?q=Wadowicka%2061B%2C%2032-640%20Zator&output=embed">
+              </iframe>
+            </div>
+
+            <div class="small">Social: <a href="https://www.instagram.com/sei_bello97" target="_blank" rel="noopener">Instagram</a> • <a href="https://www.facebook.com/profile.php?id=100093185689563" target="_blank" rel="noopener">Facebook</a></div>
+          </div>
+
+          <div class="form reveal">
+            <form id="contactForm" novalidate>
+              <div class="fields">
+                <div>
+                  <label for="name">Imię</label>
+                  <input id="name" name="name" type="text" autocomplete="name" placeholder="np. Żaneta" required />
+                </div>
+                <div>
+                  <label for="phone">Telefon</label>
+                  <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="np. 575 440 253" required />
+                </div>
+              </div>
+
+              <div style="height:10px"></div>
+
+              <div>
+                <label for="service">Usługa</label>
+                <input id="service" name="service" type="text" placeholder="np. koloryzacja / tonowanie / strzyżenie" />
+              </div>
+
+              <div style="height:10px"></div>
+
+              <div>
+                <label for="msg">Wiadomość</label>
+                <textarea id="msg" name="msg" placeholder="Napisz: długość włosów, inspiracja, preferowany termin…" required></textarea>
+              </div>
+
+              <div class="form__actions">
+                <button class="btn btn--primary" type="submit">Wyślij e-mail</button>
+                <span class="small" id="formHint">Wysyłka otwiera Twój program pocztowy (mailto).</span>
+              </div>
+            </form>
+
+            <div style="height:12px"></div>
+
+            <div class="card" style="border-radius:var(--radius2)">
+              <div style="padding:16px">
+                <b style="display:block; font-size:14px; margin-bottom:6px">Rezerwacja online</b>
+                <div class="small">Najlepiej przez Booksy — pełny cennik, dostępne terminy i szybka rezerwacja.</div>
+                <div style="height:10px"></div>
+                <a class="btn" href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile" target="_blank" rel="noopener">Otwórz Booksy</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="foot">
+        <div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="brand__mark" style="width:32px; height:32px; border-radius:12px">
+              <img class="brand__logo" src="logo.jpeg" alt="Logo Sei Bello" />
+            </div>
+            <div>
+              <b style="display:block; font-size:13px; color:var(--text)">Sei Bello — Studio Pielęgnacji Włosów</b>
+              <span class="small">© <span id="year"></span> • Wadowicka 61B, Zator</span>
+            </div>
+          </div>
+        </div>
+        <div class="social" aria-label="Linki">
+          <a class="chip" href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile" target="_blank" rel="noopener">Booksy</a>
+          <a class="chip" href="https://www.instagram.com/sei_bello97" target="_blank" rel="noopener">Instagram</a>
+          <a class="chip" href="https://www.facebook.com/profile.php?id=100093185689563" target="_blank" rel="noopener">Facebook</a>
+          <a class="chip" href="#galeria">Galeria</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Gallery modal -->
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-label="Podgląd zdjęcia">
+    <div class="modal__inner">
+      <div class="modal__top">
+        <b id="modalTitle">Podgląd</b>
+        <button class="modal__close" type="button" id="modalClose" aria-label="Zamknij">✕</button>
+      </div>
+      <img class="modal__img" id="modalImg" alt="" />
+    </div>
+  </div>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile menu
+    const burger = document.getElementById('burger');
+    const mobile = document.getElementById('mobile');
+    burger.addEventListener('click', () => {
+      const expanded = burger.getAttribute('aria-expanded') === 'true';
+      burger.setAttribute('aria-expanded', String(!expanded));
+      mobile.hidden = expanded;
+    });
+    mobile.addEventListener('click', (e) => {
+      if (e.target.matches('a')) {
+        burger.setAttribute('aria-expanded', 'false');
+        mobile.hidden = true;
+      }
+    });
+
+    // Reveal on scroll
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('is-visible');
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Gallery modal
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalClose = document.getElementById('modalClose');
+
+    function openModal(src, title, alt){
+      modal.setAttribute('aria-hidden', 'false');
+      modalImg.src = src;
+      modalImg.alt = alt || title || 'Zdjęcie';
+      modalTitle.textContent = title || 'Podgląd';
+      document.body.style.overflow = 'hidden';
+      modalClose.focus();
+    }
+    function closeModal(){
+      modal.setAttribute('aria-hidden', 'true');
+      modalImg.src = '';
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.gallery .g').forEach(fig => {
+      fig.addEventListener('click', () => {
+        const img = fig.querySelector('img');
+        openModal(img.src, fig.dataset.title, img.alt);
+      });
+    });
+
+    modalClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') closeModal();
+    });
+
+    // Contact form -> mailto
+    const form = document.getElementById('contactForm');
+    const hint = document.getElementById('formHint');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const service = document.getElementById('service').value.trim();
+      const msg = document.getElementById('msg').value.trim();
+
+      if (!name || !phone || !msg) {
+        hint.textContent = 'Uzupełnij: Imię, Telefon oraz Wiadomość.';
+        hint.style.color = 'rgba(255,255,255,.86)';
+        return;
+      }
+
+      const to = 'packa36@op.pl';
+      const subject = encodeURIComponent('Zapytanie o termin — Sei Bello');
+      const body = encodeURIComponent(
+        `Imię: ${name}
+Telefon: ${phone}
+Usługa: ${service || '-'}
+
+Wiadomość:
+${msg}`
+      );
+
+      window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+      hint.textContent = 'Otwieram program pocztowy…';
+      hint.style.color = 'rgba(255,255,255,.72)';
+      form.reset();
+    });
+
+    // Optional: close mobile menu on resize
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 760) {
+        burger.setAttribute('aria-expanded', 'false');
+        mobile.hidden = true;
+      }
+    });
+  </script>
+</body>
+</html>
