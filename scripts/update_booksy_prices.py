@@ -48,7 +48,7 @@ def parse():
     )
     r.raise_for_status()
 
-    soup = BeautifulSoup(r.text, "lxml")
+    soup = BeautifulSoup(r.text, "html.parser")
     lines = [clean(x) for x in soup.get_text("\n").splitlines()]
     lines = [x for x in lines if x and x not in SKIP]
 
