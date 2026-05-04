@@ -1,295 +1,372 @@
 import json
+import os
 import re
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
 
 import requests
 from bs4 import BeautifulSoup
-from bs4.element import NavigableString, Tag
 
 BOOKSY_URL = "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile"
 OUT_PATH = "data/booksy-prices.json"
 
-PRICE_RE = re.compile(r"\b\d{1,4},\d{2}\s*zł\+?\b", re.IGNORECASE)
-DUR_RE = re.compile(r"\b(\d+\s*g(?:\s*\d+\s*min)?|\d+\s*min)\b", re.IGNORECASE)
+# UWAGA: bez końcowego \b, żeby poprawnie łapać "zł+"
+PRICE_RE = re.compile(r"\b\d{1,4},\d{2}\s*zł\+?(?=\s|$)", re.IGNORECASE)
+
+# Łapie: "2g", "1g30min", "1g 30min", "30min"
+DUR_RE = re.compile(r"\b\d+\s*g(?:\s*\d+\s*min)?\b|\b\d+\s*min\b", re.IGNORECASE)
+
 COUNT_RE = re.compile(r"^\d+\s+usług[iy]?$", re.IGNORECASE)
 
-# Tego NIE wyrzucamy: "Umów" jest potrzebne do parsowania wariantów
-SKIP_TEXT = {
-    "Zarezerwuj", "Zapisz termin", "Pokaż wszystkie zdjęcia",
-    "Wstecz", "Dalej", "Pokaż więcej", "Pokaż mniej",
+SKIP_EXACT = {
+    "Zarezerwuj",
+    "Zapisz termin",
+    "Pokaż wszystkie zdjęcia",
+    "Szukaj usługi",
 }
 
-HEADING_TAG_RE = re.compile(r"^h[1-6]$")
+STOP_MARKERS = {
+    "Opinie",
+    "Udogodnienia",
+    "Godziny otwarcia",
+    "Mapa",
+}
+
 
 def clean(s: str) -> str:
-    return re.sub(r"\s+", " ", s.replace("\xa0", " ")).strip()
+    s = s.replace("\xa0", " ")
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
 
-def is_price(s: str) -> bool:
-    return bool(PRICE_RE.search(s))
 
-def is_duration(s: str) -> bool:
-    return bool(DUR_RE.search(s))
+def is_price(line: str) -> bool:
+    return bool(PRICE_RE.search(line))
 
-def extract_price(s: str) -> str:
-    # jeśli w linii są 2 ceny (promo), weź ostatnią jako aktualną
-    prices = PRICE_RE.findall(s)
-    return clean(prices[-1]) if prices else clean(s)
+
+def is_duration(line: str) -> bool:
+    return bool(DUR_RE.search(line))
+
 
 def normalize_duration(s: str) -> str:
-    return clean(s).replace(" ", "")
+    s = clean(s)
+    # "1g30min" -> "1g 30min"
+    s = re.sub(r"(\d)\s*g\s*(\d)", r"\1g \2", s, flags=re.IGNORECASE)
+    # "30 min" -> "30min"
+    s = s.replace(" min", "min")
+    return s
 
-def is_heading_tag(t: Any) -> bool:
-    return isinstance(t, Tag) and bool(HEADING_TAG_RE.match(t.name or ""))
 
-def find_heading(soup: BeautifulSoup, title: str) -> Optional[Tag]:
-    title = clean(title).lower()
-    for h in soup.find_all(HEADING_TAG_RE):
-        if clean(h.get_text()).lower() == title:
-            return h
-    return None
+def extract_price(line: str) -> str:
+    found = PRICE_RE.findall(line)
+    return clean(found[-1]) if found else clean(line)
 
-def collect_strings_between(start: Tag, end: Tag) -> List[str]:
-    out: List[str] = []
-    last = None
-    for el in start.next_elements:
-        if el == end:
-            break
-        if isinstance(el, NavigableString):
-            s = clean(str(el))
-            if not s:
-                continue
-            if s in SKIP_TEXT:
-                continue
-            # usuń “puste” ozdobniki
-            if s in {"…", "..."}:
-                continue
-            if s == last:
-                continue
-            out.append(s)
-            last = s
-    return out
 
-def parse_rows_from_block(lines: List[str]) -> List[Dict[str, str]]:
-    """
-    Z bloku jednej usługi wyciąga wiersze po "Umów":
-    [nazwa] [cena] [czas] Umów
-    """
-    rows: List[Dict[str, str]] = []
+def token0(s: str) -> str:
+    # pierwszy "token" porównawczy (żeby odróżniać warianty od nowych usług)
+    s = re.sub(r"[^\wąćęłńóśźżĄĆĘŁŃÓŚŹŻ]+", " ", s, flags=re.IGNORECASE)
+    s = clean(s).lower()
+    return s.split()[0] if s else ""
 
-    def is_book_button(x: str) -> bool:
-        return x.lower() == "umów" or x.lower().startswith("umów")
 
-    for i, t in enumerate(lines):
-        if not is_book_button(t):
-            continue
-
-        # cena najbliżej wstecz
-        p_idx = None
-        price = ""
-        for j in range(i - 1, max(-1, i - 25), -1):
-            if is_price(lines[j]):
-                p_idx = j
-                price = extract_price(lines[j])
-                break
-        if p_idx is None or not price:
-            continue
-
-        # czas (szukaj blisko ceny aż do "Umów")
-        dur = ""
-        for k in range(p_idx + 1, i):
-            if is_duration(lines[k]):
-                dur = normalize_duration(lines[k])
-        if not dur:
-            # czas czasem bywa przed ceną
-            for k in range(p_idx - 1, max(-1, p_idx - 8), -1):
-                if is_duration(lines[k]):
-                    dur = normalize_duration(lines[k])
-                    break
-
-        # nazwa: najbliższy sensowny tekst przed ceną
-        name = ""
-        for k in range(p_idx - 1, max(-1, p_idx - 25), -1):
-            cand = lines[k]
-            if not cand:
-                continue
-            if cand in SKIP_TEXT:
-                continue
-            if cand.lower() in {"umów", "usługi", "opinie"}:
-                continue
-            if COUNT_RE.match(cand):
-                continue
-            if is_price(cand) or is_duration(cand):
-                continue
-            # odfiltruj typowe “szumy”
-            if re.search(r"(zaoszczędź|promocj|zobacz|mapa|instagram|facebook)", cand, re.I):
-                continue
-            name = cand
-            break
-
-        if not name:
-            continue
-
-        rows.append({"name": name, "price": price, "duration": dur})
-
-    # usuń duplikaty (czasem te same wiersze wpadają 2x)
-    uniq: List[Dict[str, str]] = []
-    seen = set()
-    for r in rows:
-        key = (r.get("name",""), r.get("price",""), r.get("duration",""))
-        if key in seen:
-            continue
-        seen.add(key)
-        uniq.append(r)
-
-    return uniq
-
-def is_category_heading(h: Tag, cat_names_known: set) -> bool:
-    t = clean(h.get_text())
-    if t in cat_names_known:
+def is_description_line(line: str) -> bool:
+    l = clean(line)
+    low = l.lower()
+    if not l:
         return True
-    # czasem kategoria ma obok “X usług” (np. Usługi męskie)
-    # sprawdź najbliższe stringi do kolejnego nagłówka
-    probe = []
-    for el in h.next_elements:
-        if el == h:
-            continue
-        if is_heading_tag(el):
-            break
-        if isinstance(el, NavigableString):
-            s = clean(str(el))
-            if s:
-                probe.append(s)
-        if len(probe) >= 8:
-            break
-    return any(COUNT_RE.match(x) for x in probe)
+    if l.startswith("Image:") or "Portfolio usługi" in l:
+        return True
+    if "..." in l:
+        return True
+    if "." in l:
+        return True
+    if low.startswith(("w cen", "w cene", "w cenę", "w cenie")):
+        return True
+    return False
 
-def parse() -> Dict[str, Any]:
+
+def is_probably_variant(name: str, parent_name: str) -> bool:
+    n = clean(name).lower()
+    if n.startswith(("włosy", "wlosy", "wariant", "cena od", "od ")):
+        return True
+
+    p0 = token0(parent_name)
+    n0 = token0(name)
+    if p0 and n0 and p0 == n0:
+        return True
+
+    return False
+
+
+def find_section(lines: list[str]) -> list[str]:
+    start = None
+    for i, l in enumerate(lines):
+        if l == "Usługi":
+            start = i
+            break
+    if start is None:
+        raise RuntimeError("Nie znaleziono sekcji 'Usługi' na stronie Booksy.")
+
+    end = None
+    for j in range(start + 1, len(lines)):
+        if lines[j] in STOP_MARKERS:
+            end = j
+            break
+
+    return lines[start : (end if end is not None else len(lines))]
+
+
+def parse_price_block(sec: list[str], i: int, category_headers: set[str]):
+    """
+    Parsuje blok:
+      nazwa
+      (opcjonalnie jakieś śmieci)
+      cena
+      czas
+      Umów
+    Zabezpieczenie: jeśli po nazwie pojawia się linia Image:/Portfolio -> nie parsujemy
+    (bo to najczęściej start kolejnej usługi).
+    """
+    name = sec[i]
+    if (
+        name in category_headers
+        or COUNT_RE.match(name or "")
+        or is_price(name)
+        or is_duration(name)
+        or clean(name).lower() == "umów"
+    ):
+        return None
+
+    price_idx = None
+    for k in range(i + 1, min(i + 8, len(sec))):
+        nxt = sec[k]
+        if nxt.startswith("Image:") or "Portfolio usługi" in nxt:
+            return None
+        if nxt in category_headers or (k + 1 < len(sec) and COUNT_RE.match(sec[k + 1] or "")):
+            return None
+        if is_price(nxt):
+            price_idx = k
+            break
+
+    if price_idx is None:
+        return None
+
+    dur_idx = None
+    for k in range(price_idx + 1, min(price_idx + 6, len(sec))):
+        if is_duration(sec[k]):
+            dur_idx = k
+            break
+
+    umow_idx = None
+    for k in range((dur_idx or price_idx) + 1, min((dur_idx or price_idx) + 6, len(sec))):
+        if clean(sec[k]).lower() == "umów":
+            umow_idx = k
+            break
+    if umow_idx is None:
+        umow_idx = dur_idx or price_idx
+
+    item = {
+        "name": clean(name),
+        "price": extract_price(sec[price_idx]),
+        "duration": normalize_duration(sec[dur_idx]) if dur_idx is not None else "",
+    }
+    return item, umow_idx + 1
+
+
+def parse_base(sec: list[str], i: int):
+    """
+    Bazowy blok ceny dla usługi (często to 'Cena od' / pierwszy wariant).
+    Po nazwie mogą być 1..N linii Image: Portfolio...
+    """
+    j = i + 1
+    while j < len(sec) and (sec[j].startswith("Image:") or "Portfolio usługi" in sec[j]):
+        j += 1
+
+    price_idx = None
+    for k in range(j, min(j + 10, len(sec))):
+        if is_price(sec[k]):
+            price_idx = k
+            break
+    if price_idx is None:
+        return None
+
+    dur_idx = None
+    for k in range(price_idx + 1, min(price_idx + 8, len(sec))):
+        if is_duration(sec[k]):
+            dur_idx = k
+            break
+
+    umow_idx = None
+    for k in range((dur_idx or price_idx) + 1, min((dur_idx or price_idx) + 8, len(sec))):
+        if clean(sec[k]).lower() == "umów":
+            umow_idx = k
+            break
+    if umow_idx is None:
+        umow_idx = dur_idx or price_idx
+
+    return {
+        "price": extract_price(sec[price_idx]),
+        "duration": normalize_duration(sec[dur_idx]) if dur_idx is not None else "",
+        "next_i": umow_idx + 1,
+    }
+
+
+def parse_service(sec: list[str], i: int, category_headers: set[str]):
+    """
+    Usługa może być:
+      A) prosta: name + price + dur
+      B) nagłówek + warianty (często ostatni wariant jest tylko nazwą bez ceny) => robimy SHIFT
+    """
+    name = sec[i]
+    base = parse_base(sec, i)
+    if not base:
+        return None
+
+    base_price = base["price"]
+    base_dur = base["duration"]
+    k = base["next_i"]
+
+    variant_blocks = []
+    trailing_variant_names = []
+
+    while k < len(sec):
+        line = sec[k]
+
+        # koniec kategorii / sekcji
+        if line in category_headers or (k + 1 < len(sec) and COUNT_RE.match(sec[k + 1] or "")):
+            break
+
+        # start kolejnej "dużej" usługi często ma Image: w następnej linii
+        if k + 1 < len(sec) and (sec[k + 1].startswith("Image:") or "Portfolio usługi" in sec[k + 1]):
+            break
+
+        if is_price(line) or is_duration(line) or clean(line).lower() == "umów":
+            k += 1
+            continue
+
+        # spróbuj sparsować kolejny blok cena/czas
+        pb = parse_price_block(sec, k, category_headers)
+        if pb:
+            item, next_k = pb
+            # jeśli to nie wygląda na wariant tej usługi -> to pewnie nowa usługa (np. Farbowanie-odrost)
+            if not is_probably_variant(item["name"], name):
+                break
+            variant_blocks.append(item)
+            k = next_k
+            continue
+
+        # brak ceny => może to być ostatni wariant (tylko nazwa) albo opis
+        if not is_description_line(line) and clean(line) not in SKIP_EXACT:
+            trailing_variant_names.append(clean(line))
+
+        k += 1
+
+    # bez wariantów
+    if not variant_blocks and not trailing_variant_names:
+        return {"item": {"name": clean(name), "price": base_price, "duration": base_dur}, "next_i": k}
+
+    # mamy warianty => budujemy item z variants[]
+    # SHIFT: jeśli mamy trailing nazwę bez ceny, to:
+    #   variants[0] dostaje bazową cenę/czas,
+    #   variants[1] dostaje cenę/czas z pierwszego variant_block,
+    #   ...
+    names = [vb["name"] for vb in variant_blocks] + trailing_variant_names
+    variants = []
+
+    if trailing_variant_names and names:
+        variants.append({"name": names[0], "price": base_price, "duration": base_dur})
+        for idx in range(1, len(names)):
+            src = variant_blocks[min(idx - 1, len(variant_blocks) - 1)]
+            variants.append({"name": names[idx], "price": src.get("price", ""), "duration": src.get("duration", "")})
+    else:
+        # brak trailing => zostaw bazową jako "Cena od" jeśli nie jest duplikatem pierwszego wariantu
+        if variant_blocks and (base_price != variant_blocks[0].get("price") or base_dur != variant_blocks[0].get("duration")):
+            variants.append({"name": "Cena od", "price": base_price, "duration": base_dur})
+        variants.extend(variant_blocks)
+
+    return {"item": {"name": clean(name), "variants": variants}, "next_i": k}
+
+
+def parse():
     r = requests.get(
         BOOKSY_URL,
-        headers={"User-Agent": "Mozilla/5.0 (compatible; SeiBelloPriceBot/2.0)"},
-        timeout=45,
+        headers={"User-Agent": "Mozilla/5.0 (compatible; SeiBelloPriceBot/1.0)"},
+        timeout=30,
     )
     r.raise_for_status()
 
     soup = BeautifulSoup(r.text, "html.parser")
 
-    h_services = find_heading(soup, "Usługi")
-    if not h_services:
-        raise RuntimeError("Nie znaleziono nagłówka 'Usługi' na stronie Booksy.")
+    lines = [clean(x) for x in soup.get_text("\n").splitlines()]
+    lines = [x for x in lines if x and x not in SKIP_EXACT]
 
-    h_reviews = find_heading(soup, "Opinie")
-    if not h_reviews:
-        # fallback: jeśli “Opinie” nie istnieje w HTML, utnij po prostu po kawałku
-        # (lepiej niż łapać Udogodnienia itd.)
-        h_reviews = soup.find(HEADING_TAG_RE)
-        if not h_reviews:
-            raise RuntimeError("Nie znaleziono nagłówka kończącego (Opinie).")
+    sec = find_section(lines)
 
-    # zbierz wszystkie nagłówki między Usługi -> Opinie
-    headings: List[Tag] = []
-    for h in h_services.find_all_next(HEADING_TAG_RE):
-        if h == h_reviews:
+    # wykryj nagłówki kategorii (np. "Usługi męskie" + "4 usługi")
+    category_headers = set()
+    for i in range(len(sec) - 1):
+        if COUNT_RE.match(sec[i + 1] or ""):
+            category_headers.add(sec[i])
+    category_headers.add("Popularne usługi")  # ta zwykle nie ma licznika obok
+
+    categories = []
+    current = None
+
+    def start_category(name: str):
+        nonlocal current
+        current = {"name": clean(name), "items": []}
+        categories.append(current)
+
+    i = 0
+    while i < len(sec):
+        line = sec[i]
+
+        if line in STOP_MARKERS:
             break
-        headings.append(h)
 
-    # lista “znanych” nazw kategorii (Booksy może dodać nowe – wtedy zadziała heurystyka z “X usług”)
-    known_categories = {
-        "Popularne usługi",
-        "Usługi męskie",
-        "Usługi damskie",
-        "Koloryzacja",
-        "Zabiegi regenerujące włosy",
-        "Prostowanie",
-        "Fryzura okolicznościowa",
-        "Trwała ondulacja",
-    }
-
-    # zidentyfikuj kategorie w tej sekcji
-    cat_heads: List[Tag] = []
-    for h in headings:
-        if is_category_heading(h, known_categories):
-            cat_heads.append(h)
-
-    if not cat_heads:
-        raise RuntimeError("Nie znaleziono kategorii w sekcji 'Usługi' (Booksy mogło zmienić układ).")
-
-    categories: List[Dict[str, Any]] = []
-
-    for ci, cat_h in enumerate(cat_heads):
-        cat_name = clean(cat_h.get_text())
-        cat_end = cat_heads[ci + 1] if ci + 1 < len(cat_heads) else h_reviews
-
-        # nagłówki “usług” (karty) wewnątrz kategorii
-        svc_heads: List[Tag] = []
-        for h in cat_h.find_all_next(HEADING_TAG_RE):
-            if h == cat_end:
-                break
-            # pomiń kolejne kategorie
-            if is_category_heading(h, known_categories):
-                continue
-            t = clean(h.get_text())
-            if not t or t.lower() in {"usługi", "opinie"}:
-                continue
-            svc_heads.append(h)
-
-        items: List[Dict[str, Any]] = []
-
-        for si, svc_h in enumerate(svc_heads):
-            svc_title = clean(svc_h.get_text())
-            svc_end = svc_heads[si + 1] if si + 1 < len(svc_heads) else cat_end
-
-            block_lines = collect_strings_between(svc_h, svc_end)
-
-            # wyciągnij wiersze z “Umów”
-            rows = parse_rows_from_block(block_lines)
-            if not rows:
-                continue
-
-            # jeśli w obrębie bloku jest 1 pozycja i jej nazwa == tytuł, traktuj jako “pojedynczą usługę”
-            def norm(x: str) -> str:
-                return re.sub(r"\s+", " ", x).strip().lower()
-
-            if len(rows) == 1 and norm(rows[0]["name"]) == norm(svc_title):
-                items.append({
-                    "name": svc_title,
-                    "price": rows[0]["price"],
-                    "duration": rows[0]["duration"],
-                })
+        # start kategorii
+        if line in category_headers:
+            start_category(line)
+            # jeśli za kategorią jest "X usługi" -> przeskocz licznik
+            if i + 1 < len(sec) and COUNT_RE.match(sec[i + 1] or ""):
+                i += 2
             else:
-                # grupa wariantów pod jednym nagłówkiem
-                # jeśli pierwszy wiersz ma tę samą nazwę co nagłówek, zamień na “Cena od”
-                if norm(rows[0]["name"]) == norm(svc_title):
-                    rows[0]["name"] = "Cena od"
-                items.append({
-                    "name": svc_title,
-                    "variants": rows,
-                })
+                i += 1
+            continue
 
-        if items:
-            categories.append({"name": cat_name, "items": items})
+        if current is None:
+            i += 1
+            continue
+
+        # pomijamy śmieci/obrazy
+        if line.startswith("Image:") or "Portfolio usługi" in line:
+            i += 1
+            continue
+
+        # próba parsowania usługi
+        parsed = parse_service(sec, i, category_headers)
+        if parsed:
+            current["items"].append(parsed["item"])
+            i = parsed["next_i"]
+            continue
+
+        i += 1
 
     payload = {
         "source": BOOKSY_URL,
         "updated_at": datetime.now(timezone.utc).isoformat(),
-        "categories": categories,
+        "categories": [c for c in categories if c.get("items")],
     }
     return payload
 
-if __name__ == "__main__":
-    import os
 
+if __name__ == "__main__":
     data = parse()
     os.makedirs("data", exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
     total = 0
-    for c in data.get("categories", []):
-        for it in c.get("items", []):
-            if "variants" in it:
-                total += len(it["variants"])
-            else:
-                total += 1
+    for c in data["categories"]:
+        for it in c["items"]:
+            total += len(it.get("variants", [])) if "variants" in it else 1
 
-    print(f"OK -> {OUT_PATH} ({total} pozycji/wariantów)")
+    print(f"OK -> {OUT_PATH} ({total} pozycji)")
