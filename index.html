@@ -1006,15 +1006,18 @@
   // Mobile menu
   const burger = document.getElementById('burger');
   const mobile = document.getElementById('mobile');
-  burger.addEventListener('click', () => {
+
+  burger?.addEventListener('click', () => {
     const expanded = burger.getAttribute('aria-expanded') === 'true';
     burger.setAttribute('aria-expanded', String(!expanded));
-    mobile.hidden = expanded;
+    // hidden: true = schowane, false = pokazane
+    if (mobile) mobile.hidden = expanded;
   });
-  mobile.addEventListener('click', (e) => {
-    if (e.target.matches('a')) {
-      burger.setAttribute('aria-expanded', 'false');
-      mobile.hidden = true;
+
+  mobile?.addEventListener('click', (e) => {
+    if (e.target && e.target.matches && e.target.matches('a')) {
+      burger?.setAttribute('aria-expanded', 'false');
+      if (mobile) mobile.hidden = true;
     }
   });
 
@@ -1027,46 +1030,47 @@
 
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  // === Cennik z JSON (Booksy) ===
+  // === Cennik z JSON (data/booksy-prices.json) ===
   function escapeHtml(str){
-    return String(str).replace(/[&<>"']/g, (m) => ({
+    return String(str ?? '').replace(/[&<>"']/g, (m) => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
     }[m]));
   }
 
+  // Wyciąga ceny z tekstu (obsługuje "40,00 zł 34,00 zł" albo "250,00 zł+")
+  function extractPriceTokens(priceStr){
+    const s = String(priceStr ?? '');
+    const m = s.match(/\b\d{1,4},\d{2}\s*zł\+?\b/gi);
+    if (m && m.length) return m;
+    return s.trim() ? [s.trim()] : [];
+  }
+
+  // Zamienia "185,00 zł" -> 18500 (grosze) żeby dało się policzyć min
+  function priceToCents(priceToken){
+    const s = String(priceToken ?? '');
+    const m = s.match(/(\d{1,4}),(\d{2})/);
+    if (!m) return null;
+    const zł = parseInt(m[1], 10);
+    const gr = parseInt(m[2], 10);
+    if (Number.isNaN(zł) || Number.isNaN(gr)) return null;
+    return zł * 100 + gr;
+  }
+
+  // Warianty na Booksy najczęściej zaczynają się od "Włosy ..."
   function isVariantLabel(name){
-    const n = String(name || '').toLowerCase();
+    const n = String(name ?? '').trim().toLowerCase();
     return n.startsWith('włosy') || n.startsWith('wlosy') || n.startsWith('wariant');
   }
 
-  // Jeśli to "koloryzacja włosów" i zaraz po niej są warianty włosów,
-  // to traktujemy to jako nagłówek grupy i NIE pokazujemy "Podstawowa"
-  function suppressBaseRowForTitle(title){
-    const t = String(title || '').toLowerCase();
-    return t === 'koloryzacja włosów' || t === 'koloryzacja wlosów';
-  }
-
-  function addRow(body, item, isSub=false){
-    const row = document.createElement('div');
-    row.className = 'priceRow' + (isSub ? ' is-sub' : '');
-    row.innerHTML = `
-      <div class="svc">
-        <b>${escapeHtml(item.name || '')}</b>
-        <span>${escapeHtml(item.duration || '')}</span>
-      </div>
-      <div class="money"><b>${escapeHtml(item.price || '')}</b></div>
-    `;
-    body.appendChild(row);
-  }
-
-  function addGroupTitle(body, title){
-    const t = document.createElement('div');
-    t.className = 'groupTitle';
-    t.innerHTML = `
-      <b>${escapeHtml(title)}</b>
-      <span>Warianty</span>
-    `;
-    body.appendChild(t);
+  function renderMoneyHTML(priceStr){
+    const tokens = extractPriceTokens(priceStr);
+    // Jeśli są 2 ceny, pokazujemy starą przekreśloną + nową
+    if (tokens.length >= 2){
+      const oldP = tokens[0];
+      const newP = tokens[tokens.length - 1];
+      return `<span class="old">${escapeHtml(oldP)}</span><b>${escapeHtml(newP)}</b>`;
+    }
+    return `<b>${escapeHtml(tokens[0] ?? '')}</b>`;
   }
 
   async function loadPriceList(){
@@ -1075,8 +1079,10 @@
     if (!listEl) return;
 
     try{
-      const url = `https://raw.githubusercontent.com/2Good2Noob/Sei-Bello/main/data/booksy-prices.json?v=${Date.now()}`;
-      const res = await fetch(url, { cache: 'no-store' });
+      // bierzemy JSON z tej samej strony (GitHub Pages), więc bez CORS i bez rawgithub
+      const u = new URL('data/booksy-prices.json', window.location.href);
+      u.searchParams.set('v', Date.now()); // cache-bust
+      const res = await fetch(u.toString(), { cache: 'no-store' });
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data = await res.json();
@@ -1098,8 +1104,9 @@
 
         const details = document.createElement('details');
         details.className = 'acc reveal';
-        const cname = (cat.name || '').toLowerCase();
-        details.open = cname.includes('popularne') || idx === 0;
+
+        const catName = (cat.name || '').toLowerCase();
+        details.open = catName.includes('popularne') || idx === 0;
 
         const summary = document.createElement('summary');
         summary.innerHTML = `
@@ -1117,41 +1124,94 @@
         const body = document.createElement('div');
         body.className = 'acc__body';
 
+        function addRow(item, isSub=false){
+          const row = document.createElement('div');
+          row.className = 'priceRow' + (isSub ? ' is-sub' : '');
+          row.innerHTML = `
+            <div class="svc">
+              <b>${escapeHtml(item.name || '')}</b>
+              <span>${escapeHtml(item.duration || '')}</span>
+            </div>
+            <div class="money">${renderMoneyHTML(item.price || '')}</div>
+          `;
+          body.appendChild(row);
+        }
+
+        function addGroupTitle(title, metaText){
+          const t = document.createElement('div');
+          t.className = 'groupTitle';
+          t.innerHTML = `
+            <b>${escapeHtml(title)}</b>
+            <span>${escapeHtml(metaText || 'Warianty')}</span>
+          `;
+          body.appendChild(t);
+        }
+
+        // Render z grupowaniem "Włosy..." pod nagłówkiem (jak na Booksy)
         for (let i = 0; i < items.length; i++){
           const item = items[i];
           const next = items[i + 1];
 
-          // grupa: nagłówek + warianty
+          // Jeśli po usłudze lecą warianty "Włosy...", to robimy nagłówek grupy
           if (next && isVariantLabel(next.name) && !isVariantLabel(item.name)) {
-            addGroupTitle(body, item.name || 'Usługa');
-
-            // opcjonalna "Podstawowa" (czasem myli, np. przy Koloryzacja włosów)
-            if (!suppressBaseRowForTitle(item.name)) {
-              addRow(body, { name: 'Podstawowa', price: item.price, duration: item.duration }, true);
+            // zbierz warianty
+            const variants = [];
+            let j = i + 1;
+            while (j < items.length && isVariantLabel(items[j].name)) {
+              variants.push(items[j]);
+              j++;
             }
 
-            while (i + 1 < items.length && isVariantLabel(items[i + 1].name)) {
-              i++;
-              addRow(body, items[i], true);
+            // wylicz "od X zł" jako min z ceny usługi + cen wariantów (jeśli są)
+            const cents = [];
+            const itemTokens = extractPriceTokens(item.price);
+            const itemLast = itemTokens[itemTokens.length - 1];
+            const itemC = priceToCents(itemLast);
+            if (itemC !== null) cents.push(itemC);
+
+            variants.forEach(v => {
+              const toks = extractPriceTokens(v.price);
+              const last = toks[toks.length - 1];
+              const c = priceToCents(last);
+              if (c !== null) cents.push(c);
+            });
+
+            let meta = 'Warianty';
+            if (cents.length){
+              const min = Math.min(...cents);
+              const zł = Math.floor(min / 100);
+              const gr = String(min % 100).padStart(2, '0');
+              meta = `od ${zł},${gr} zł`;
+              if (item.duration) meta += ` • ${item.duration}`;
+            } else if (item.duration) {
+              meta = `Warianty • ${item.duration}`;
             }
+
+            addGroupTitle(item.name || 'Usługa', meta);
+
+            // pokaż tylko warianty (nagłówek nie jest pozycją)
+            variants.forEach(v => addRow(v, true));
+
+            // przeskocz przetworzone warianty
+            i = j - 1;
             continue;
           }
 
-          // normalna pozycja
-          addRow(body, item, false);
+          // normalna pozycja (bez wariantów)
+          addRow(item, false);
         }
 
         details.appendChild(body);
         listEl.appendChild(details);
 
         // reveal dla dynamicznych elementów
-        if (typeof io !== 'undefined') io.observe(details);
+        io.observe(details);
       });
 
     } catch (err){
       listEl.innerHTML = `
         <div class="note">
-          Nie udało się pobrać cennika. Najaktualniejsze ceny znajdziesz w
+          Nie udało się pobrać cennika (brak pliku lub błąd). Najaktualniejsze ceny znajdziesz w
           <a href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile"
              target="_blank" rel="noopener" style="text-decoration:underline">Booksy</a>.
         </div>
@@ -1168,53 +1228,59 @@
   const modalClose = document.getElementById('modalClose');
 
   function openModal(src, title, alt){
-    modal.setAttribute('aria-hidden', 'false');
-    modalImg.src = src;
-    modalImg.alt = alt || title || 'Zdjęcie';
-    modalTitle.textContent = title || 'Podgląd';
+    modal?.setAttribute('aria-hidden', 'false');
+    if (modalImg) {
+      modalImg.src = src;
+      modalImg.alt = alt || title || 'Zdjęcie';
+    }
+    if (modalTitle) modalTitle.textContent = title || 'Podgląd';
     document.body.style.overflow = 'hidden';
-    modalClose.focus();
+    modalClose?.focus();
   }
   function closeModal(){
-    modal.setAttribute('aria-hidden', 'true');
-    modalImg.src = '';
+    modal?.setAttribute('aria-hidden', 'true');
+    if (modalImg) modalImg.src = '';
     document.body.style.overflow = '';
   }
 
   document.querySelectorAll('.gallery .g').forEach(fig => {
     fig.addEventListener('click', () => {
       const img = fig.querySelector('img');
+      if (!img) return;
       openModal(img.src, fig.dataset.title, img.alt);
     });
   });
 
-  modalClose.addEventListener('click', closeModal);
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  modalClose?.addEventListener('click', closeModal);
+  modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') closeModal();
+    if (e.key === 'Escape' && modal?.getAttribute('aria-hidden') === 'false') closeModal();
   });
 
   // Contact form -> mailto
   const form = document.getElementById('contactForm');
   const hint = document.getElementById('formHint');
-  form.addEventListener('submit', (e) => {
+
+  form?.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const name = document.getElementById('name').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const service = document.getElementById('service').value.trim();
-    const msg = document.getElementById('msg').value.trim();
+    const name = document.getElementById('name')?.value?.trim() || '';
+    const phone = document.getElementById('phone')?.value?.trim() || '';
+    const service = document.getElementById('service')?.value?.trim() || '';
+    const msg = document.getElementById('msg')?.value?.trim() || '';
 
     if (!name || !phone || !msg) {
-      hint.textContent = 'Uzupełnij: Imię, Telefon oraz Wiadomość.';
-      hint.style.color = 'rgba(255,255,255,.86)';
+      if (hint) {
+        hint.textContent = 'Uzupełnij: Imię, Telefon oraz Wiadomość.';
+        hint.style.color = 'rgba(255,255,255,.86)';
+      }
       return;
     }
 
     const to = 'packa36@op.pl';
     const subject = encodeURIComponent('Zapytanie o termin — Sei Bello');
     const body = encodeURIComponent(
-      `Imię: ${name}
+`Imię: ${name}
 Telefon: ${phone}
 Usługa: ${service || '-'}
 
@@ -1223,16 +1289,18 @@ ${msg}`
     );
 
     window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
-    hint.textContent = 'Otwieram program pocztowy…';
-    hint.style.color = 'rgba(255,255,255,.72)';
+    if (hint) {
+      hint.textContent = 'Otwieram program pocztowy…';
+      hint.style.color = 'rgba(255,255,255,.72)';
+    }
     form.reset();
   });
 
   // Optional: close mobile menu on resize
   window.addEventListener('resize', () => {
     if (window.innerWidth > 760) {
-      burger.setAttribute('aria-expanded', 'false');
-      mobile.hidden = true;
+      burger?.setAttribute('aria-expanded', 'false');
+      if (mobile) mobile.hidden = true;
     }
   });
 </script>
