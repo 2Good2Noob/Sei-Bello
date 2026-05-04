@@ -1083,15 +1083,56 @@ async function loadPriceList(){
       const body = document.createElement('div');
       body.className = 'acc__body';
 
-      items.forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'priceRow';
-        row.innerHTML = `
-          <div class="svc"><b>${escapeHtml(item.name || '')}</b><span>${escapeHtml(item.duration || '')}</span></div>
-          <div class="money"><b>${escapeHtml(item.price || '')}</b></div>
-        `;
-        body.appendChild(row);
-      });
+      function isVariantLabel(name){
+  const n = String(name || '').toLowerCase();
+  return n.startsWith('włosy') || n.startsWith('wlosy') || n.startsWith('wariant');
+}
+
+function addRow(item, isSub=false){
+  const row = document.createElement('div');
+  row.className = 'priceRow' + (isSub ? ' is-sub' : '');
+  row.innerHTML = `
+    <div class="svc">
+      <b>${escapeHtml(item.name || '')}</b>
+      <span>${escapeHtml(item.duration || '')}</span>
+    </div>
+    <div class="money"><b>${escapeHtml(item.price || '')}</b></div>
+  `;
+  body.appendChild(row);
+}
+
+function addGroupTitle(title){
+  const t = document.createElement('div');
+  t.className = 'groupTitle';
+  t.innerHTML = `
+    <b>${escapeHtml(title)}</b>
+    <span>Warianty</span>
+  `;
+  body.appendChild(t);
+}
+
+for (let i = 0; i < items.length; i++){
+  const item = items[i];
+  const next = items[i + 1];
+
+  // Jeśli po usłudze idą warianty (Włosy... / Wariant...), traktuj jako grupę
+  if (next && isVariantLabel(next.name) && !isVariantLabel(item.name)) {
+    addGroupTitle(item.name || 'Usługa');
+
+    // cena bazowa jako "Podstawowa" (żeby nic nie zniknęło)
+    addRow({ name: 'Podstawowa', price: item.price, duration: item.duration }, true);
+
+    // warianty pod spodem
+    while (i + 1 < items.length && isVariantLabel(items[i + 1].name)) {
+      i++;
+      addRow(items[i], true);
+    }
+    continue;
+  }
+
+  // normalna pozycja
+  addRow(item, false);
+}
 
       details.appendChild(body);
       listEl.appendChild(details);
