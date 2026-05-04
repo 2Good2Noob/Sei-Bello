@@ -1,7 +1,8 @@
 import json
-import re
 import os
+import re
 from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional, Tuple
 
 import requests
 from bs4 import BeautifulSoup
@@ -9,10 +10,24 @@ from bs4 import BeautifulSoup
 BOOKSY_URL = "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile"
 OUT_PATH = "data/booksy-prices.json"
 
-PRICE_RE = re.compile(r"\b\d{1,4},\d{2}\s*zł\+?\b", re.IGNORECASE)
-DUR_RE = re.compile(r"\b(\d+\s*g(?:\s*\d+\s*min)?|\d+\s*min)\b", re.IGNORECASE)
-COUNT_RE = re.compile(r"^\d+\s+usług[iy]?$", re.IGNORECASE)
+# ceny typu: 250,00 zł lub 250,00 zł+
+PRICE_RE = re.compile(r"(\d{1,4},\d{2})\s*zł(\+)?", re.IGNORECASE)
 
+# czasy typu: 30min, 1g, 1g 30min, 1g30min
+DUR_RE = re.compile(r"\b(\d+\s*g(?:\s*\d+\s*min)?|\d+\s*min)\b", re.IGNORECASE)
+
+# rzeczy do wywalenia z tekstu
+SKIP_EXACT = {
+    "Zapisz termin",
+    "Pokaż wszystkie zdjęcia",
+    "Zarezerwuj",
+    "Zarezerwuj wizytę",
+}
+
+# kiedy kończyć sekcję usług (żeby nie wciągać „Udogodnień” itd.)
+STOP_AT = {"Opinie", "Udogodnienia"}
+
+# kategorie (nagłówki) – część wykrywa się też po linijce „X usług”
 KNOWN_CATEGORIES = {
     "Popularne usługi",
     "Usługi męskie",
@@ -21,12 +36,11 @@ KNOWN_CATEGORIES = {
     "Zabiegi regenerujące włosy",
     "Prostowanie",
     "Fryzura okolicznościowa",
-    "Fryzury okolicznościowe",
     "Trwała ondulacja",
 }
 
-# usługi, po których na Booksy lecą warianty (włosy/variant/itp.)
-VARIANT_SERVICES = {
+# usługi, które na Booksy mają warianty (i chcemy je grupować)
+GROUPABLE_SERVICES = {
     "Strzyżenie damskie + mycie + stylizacja",
     "Koloryzacja włosów",
     "Farbowanie-odrost",
@@ -43,54 +57,61 @@ VARIANT_SERVICES = {
     "Trwała ondulacja",
 }
 
-SKIP_EXACT = {
-    "Umów",
-    "Zarezerwuj",
-    "Zapisz termin",
-    "Pokaż wszystkie zdjęcia",
-    "* * *",
-    "Udogodnienia",
-    "Parking",
-    "Internet (Wi-Fi)",
-    "Przyjazne dla dzieci",
-}
-
 def clean(s: str) -> str:
     s = s.replace("\xa0", " ")
     s = re.sub(r"\s+", " ", s).strip()
     return s
 
-def should_skip(line: str) -> bool:
-    if not line:
+def norm_key(s: str) -> str:
+    return clean(s).lower()
+
+def is_price_line(s: str) -> bool:
+    return bool(PRICE_RE.search(s))
+
+def extract_price(s: str) -> Optional[str]:
+    m = PRICE_RE.search(s)
+    if not m:
+        return None
+    val = m.group(1)
+    plus = m.group(2)
+    return f"{val} zł{plus or ''}"
+
+def is_duration_line(s: str) -> bool:
+    return bool(DUR_RE.search(s))
+
+def normalize_duration(s: str) -> str:
+    if not s:
+        return ""
+    m = DUR_RE.search(s)
+    if not m:
+        return clean(s)
+    d = m.group(1).lower().replace(" ", "")
+    # 1g30min -> 1g 30min
+    d = re.sub(r"(\d+)g(\d+)min", r"\1g \2min", d)
+    # 30min już ok
+    return d
+
+def is_count_line(s: str) -> bool:
+    return bool(re.fullmatch(r"\d+\s+usług[iy]?", s))
+
+def is_noise_line(s: str) -> bool:
+    if not s:
         return True
-    if line in SKIP_EXACT:
+    if s in SKIP_EXACT:
         return True
-    low = line.lower()
-    # te linie wchodzą z altów obrazków i rozwalają kolejność name->price->time
-    if "portfolio usługi" in low:
+    # alt-y obrazków / inne śmieci
+    if s.lower().startswith("portfolio usługi"):
         return True
-    if low.startswith("image:"):
-        return True
-    if low.startswith("booksy logo"):
+    if s.lower().startswith("image: portfolio usługi"):
         return True
     return False
 
-def is_price(line: str) -> bool:
-    return bool(PRICE_RE.search(line))
+def looks_like_hair_variant(name: str) -> bool:
+    n = norm_key(name)
+    return n.startswith("włosy") or n.startswith("wlosy") or n.startswith("wariant") or ("włosy" in n) or ("wlosy" in n)
 
-def is_duration(line: str) -> bool:
-    return bool(DUR_RE.search(line))
-
-def is_count(line: str) -> bool:
-    return bool(COUNT_RE.match(line))
-
-def normalize_name(s: str) -> str:
-    s = s.lower()
-    s = s.replace("—", "-")
-    s = re.sub(r"\s+", " ", s).strip()
-    return s
-
-def find_section(lines: list[str]) -> list[str]:
+def find_section(lines: List[str]) -> List[str]:
+    # zacznij od pierwszego „Usługi”
     start = None
     for i, l in enumerate(lines):
         if l == "Usługi":
@@ -99,77 +120,205 @@ def find_section(lines: list[str]) -> list[str]:
     if start is None:
         raise RuntimeError("Nie znaleziono sekcji 'Usługi' na stronie Booksy.")
 
+    # utnij na pierwszym „Opinie” lub „Udogodnienia” (cokolwiek będzie wcześniej)
     end = None
     for j in range(start + 1, len(lines)):
-        # ważniejsze: stop na opiniach
-        if lines[j] == "Opinie":
+        if lines[j] in STOP_AT:
             end = j
             break
 
-    sec = lines[start:end or len(lines)]
+    return lines[start : (end or len(lines))]
 
-    # jeśli trafią się śmieci po drodze – utnij wcześnie
-    if "Udogodnienia" in sec:
-        sec = sec[:sec.index("Udogodnienia")]
+def split_categories(sec: List[str]) -> List[Tuple[str, int, int]]:
+    # zwraca listę (cat_name, start_idx_after_header, end_idx)
+    starts: List[Tuple[str, int]] = []
+    i = 0
+    while i < len(sec):
+        line = sec[i]
+        if line in STOP_AT:
+            break
 
-    return sec
+        if line in KNOWN_CATEGORIES:
+            j = i + 1
+            # pomiń linijkę typu „4 usługi”
+            if j < len(sec) and is_count_line(sec[j]):
+                j += 1
+            starts.append((line, j))
+            i = j
+            continue
 
-def extract_price(line: str) -> str:
-    prices = PRICE_RE.findall(line)
-    # jeśli w tekście będą 2 ceny (promka), weź ostatnią
-    return clean(prices[-1]) if prices else clean(line)
+        # wykrycie kategorii po schemacie: "<nazwa>" + "<X usług>"
+        if i + 1 < len(sec) and is_count_line(sec[i + 1]):
+            name = line
+            j = i + 2
+            starts.append((name, j))
+            i = j
+            continue
 
-def extract_duration(lines: list[str], start_idx: int, lookahead: int = 6) -> tuple[str, int]:
+        i += 1
+
+    out: List[Tuple[str, int, int]] = []
+    for idx, (name, s) in enumerate(starts):
+        e = starts[idx + 1][1] - 1 if idx + 1 < len(starts) else len(sec)
+        out.append((name, s, e))
+    return out
+
+def try_parse_bookable_entry(lines: List[str], i: int) -> Optional[Tuple[Dict[str, Any], int]]:
     """
-    Szuka czasu w kolejnych liniach od start_idx (włącznie),
-    zwraca (duration, idx_po_zużyciu).
+    Próbuje sparsować blok:
+      <TYTUŁ>
+      [różne śmieci / obrazy / itp]
+      <CENA>
+      <CZAS>
+      Umów
+    Zabezpieczenie: jeśli zanim znajdziemy jakąkolwiek cenę pojawi się kolejny „tytuł”,
+    to uznajemy, że to był tylko „label” (wariant bez ceny) i NIE zjadamy indeksów.
     """
-    j = start_idx
-    while j < min(start_idx + lookahead, len(lines)):
-        if is_duration(lines[j]):
-            return clean(lines[j]), j + 1
-        # przerwij jeśli trafisz na nową kategorię / nową usługę z ceną
+    title = lines[i]
+    if is_noise_line(title) or title == "Umów" or is_price_line(title) or is_duration_line(title) or is_count_line(title):
+        return None
+
+    price: Optional[str] = None
+    dur: str = ""
+
+    j = i + 1
+    # mały limit – żeby nie „przeskoczyć” do kolejnej usługi i nie przesunąć cen
+    limit = min(i + 14, len(lines) - 1)
+
+    while j <= limit:
+        s = lines[j]
+
+        if s in STOP_AT or s in KNOWN_CATEGORIES:
+            return None
+
+        if is_noise_line(s):
+            j += 1
+            continue
+
+        # kolejny potencjalny tytuł zanim złapiemy cenę => poprzedni to label
+        if price is None and s not in {"Umów"} and not is_price_line(s) and not is_duration_line(s) and not is_count_line(s):
+            # UWAGA: to heurystyka, działa dobrze dla Booksy, bo cena jest blisko tytułu
+            return None
+
+        if price is None and is_price_line(s):
+            price = extract_price(s)
+
+        if not dur and is_duration_line(s):
+            dur = normalize_duration(s)
+
+        if s == "Umów":
+            if price:  # „Umów” bez ceny -> nie uznajemy za poprawny blok
+                entry = {"name": clean(title), "price": price, "duration": dur or ""}
+                return entry, j + 1
+            return None
+
         j += 1
-    return "", start_idx
 
-def is_category_header(sec: list[str], i: int) -> bool:
-    if sec[i] in KNOWN_CATEGORIES:
-        return True
-    if i + 1 < len(sec) and is_count(sec[i + 1]):
-        return True
-    return False
+    return None
 
-def is_variant_of(parent: str, cand: str) -> bool:
-    p = normalize_name(parent)
-    c = normalize_name(cand)
+def parse_category(lines: List[str]) -> List[Dict[str, Any]]:
+    items_out: List[Dict[str, Any]] = []
 
-    # uniwersalne warianty
-    if c.startswith("włosy") or c.startswith("wlosy") or c.startswith("wariant"):
-        return True
+    current_group: Optional[Dict[str, Any]] = None
+    base_price: Optional[str] = None
+    base_dur: str = ""
+    base_label_used: bool = False
 
-    # specjalne przypadki
-    if p == normalize_name("Strzyżenie damskie + mycie + stylizacja"):
-        return c.startswith("strzyżenie damskie -") or c.startswith("strzyzenie damskie -") or c.startswith("metamorfoza fryzury")
+    def flush_group():
+        nonlocal current_group, base_price, base_dur, base_label_used
+        if not current_group:
+            return
 
-    if p == normalize_name("Farbowanie-odrost"):
-        return c.startswith("farbowanie-odrost")
+        # jeśli udało się przypisać cenę bazową do konkretnego wariantu (np. "Włosy długie"),
+        # usuń "Cena od"
+        if base_label_used:
+            current_group["variants"] = [
+                v for v in current_group["variants"]
+                if norm_key(v.get("name", "")) != "cena od"
+            ]
 
-    if p == normalize_name("Rozjaśnianie - odrost"):
-        return c.startswith("rozjaśnianie odrost") or c.startswith("rozjasnianie odrost")
+        # wywal warianty całkiem puste
+        current_group["variants"] = [
+            v for v in current_group["variants"]
+            if v.get("price") or v.get("duration")
+        ]
 
-    if "tonowanie" in p:
-        return c.startswith("wariant") or c.startswith("tonowanie")
+        if current_group["variants"]:
+            items_out.append(current_group)
+        else:
+            # awaryjnie: jeśli brak wariantów, pokaż usługę jako prostą pozycję (jeśli miała cenę)
+            if base_price:
+                items_out.append({"name": current_group["name"], "price": base_price, "duration": base_dur})
 
-    if "baleyage" in p or "balayage" in p:
-        return c.startswith("baleyage") or c.startswith("balayage") or c.startswith("beleyage")
+        current_group = None
+        base_price = None
+        base_dur = ""
+        base_label_used = False
 
-    if "trwała ondulacja" in p or "trwala ondulacja" in p:
-        return c.startswith("trwała") or c.startswith("trwala") or c.startswith("włosy") or c.startswith("wlosy")
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        if not line or is_noise_line(line):
+            i += 1
+            continue
+        if line in STOP_AT:
+            break
+        if line == "Umów" or is_count_line(line):
+            i += 1
+            continue
 
-    # domyślnie: warianty często są "Włosy ..." – już złapane wyżej
-    return False
+        parsed = try_parse_bookable_entry(lines, i)
 
-def parse():
+        if parsed:
+            entry, next_i = parsed
+            title = entry["name"]
+
+            # start / continue group?
+            if current_group:
+                # jeżeli to wygląda na wariant (np. "Włosy ..." albo zawiera "włosy")
+                if looks_like_hair_variant(title):
+                    current_group["variants"].append(entry)
+                    i = next_i
+                    continue
+
+                # nowa usługa -> zamykamy grupę
+                flush_group()
+
+            # czy ta usługa ma być grupowana?
+            if title in GROUPABLE_SERVICES:
+                current_group = {"name": title, "variants": []}
+                base_price = entry.get("price")
+                base_dur = entry.get("duration", "") or ""
+                # domyślnie dajemy "Cena od", chyba że później pojawi się np. "Włosy długie" bez ceny
+                if base_price:
+                    current_group["variants"].append({"name": "Cena od", "price": base_price, "duration": base_dur})
+                i = next_i
+                continue
+
+            # zwykła pozycja
+            items_out.append(entry)
+            i = next_i
+            continue
+
+        # jeśli nie udało się sparsować jako bookable entry -> to prawie na pewno label wariantu bez ceny
+        label = clean(line)
+
+        if current_group and base_price:
+            # Jeśli label wygląda jak wariant włosów, przypisz mu cenę bazową
+            if looks_like_hair_variant(label):
+                current_group["variants"].append({"name": label, "price": base_price, "duration": base_dur})
+                base_label_used = True
+            else:
+                # nie-hair label (np. "+ strzyżenie") – zostaw jako "Zapytaj" (null), żeby nie mieszać cen
+                current_group["variants"].append({"name": label, "price": None, "duration": None})
+
+        i += 1
+
+    # koniec kategorii
+    flush_group()
+    return items_out
+
+def parse() -> Dict[str, Any]:
     r = requests.get(
         BOOKSY_URL,
         headers={"User-Agent": "Mozilla/5.0 (compatible; SeiBelloPriceBot/1.0)"},
@@ -180,134 +329,35 @@ def parse():
     soup = BeautifulSoup(r.text, "html.parser")
 
     raw_lines = [clean(x) for x in soup.get_text("\n").splitlines()]
-    lines = [x for x in raw_lines if not should_skip(x)]
+    # nie usuwamy "Umów" – to kluczowy separator
+    lines = [x for x in raw_lines if x and x not in SKIP_EXACT]
 
     sec = find_section(lines)
 
-    categories: list[dict] = []
-    current_cat: dict | None = None
-
-    i = 0
-    while i < len(sec):
-        line = sec[i]
-
-        # kategoria z licznikiem: "Usługi męskie" + "4 usługi"
-        if (i + 1 < len(sec)) and is_count(sec[i + 1]):
-            current_cat = {"name": line, "items": []}
-            categories.append(current_cat)
-            i += 2
-            continue
-
-        # kategoria bez licznika: "Popularne usługi" itp.
-        if line in KNOWN_CATEGORIES:
-            current_cat = {"name": line, "items": []}
-            categories.append(current_cat)
-            i += 1
-            continue
-
-        # jeśli jeszcze nie ma kategorii, omiń
-        if current_cat is None:
-            i += 1
-            continue
-
-        # pomiń śmieci
-        if is_price(line) or is_duration(line) or is_count(line):
-            i += 1
-            continue
-
-        # --- parsuj usługę ---
-        service_name = line
-        base_price = ""
-        base_dur = ""
-        j = i + 1
-
-        # baza: nazwa -> cena -> czas
-        if j < len(sec) and is_price(sec[j]):
-            base_price = extract_price(sec[j])
-            j += 1
-            base_dur, j2 = extract_duration(sec, j)
-            # jeśli znaleziono czas, przesuń indeks
-            j = j2
-
-        # warianty (tylko dla znanych usług wariantowych)
-        if service_name in VARIANT_SERVICES:
-            variants = []
-
-            # jeśli jest baza z ceną – wrzuć jako "Cena od"
-            if base_price or base_dur:
-                variants.append({
-                    "name": "Cena od",
-                    "price": base_price,
-                    "duration": base_dur,
-                })
-
-            # zbieraj warianty: nazwa -> (opcjonalnie cena + czas)
-            while j < len(sec):
-                # stop na nowej kategorii
-                if is_category_header(sec, j):
-                    break
-
-                cand = sec[j]
-                # jeśli to nie wariant tej usługi, kończymy warianty
-                if not is_variant_of(service_name, cand):
-                    break
-
-                v_name = cand
-                v_price = ""
-                v_dur = ""
-                j += 1
-
-                if j < len(sec) and is_price(sec[j]):
-                    v_price = extract_price(sec[j])
-                    j += 1
-                    v_dur, j2 = extract_duration(sec, j)
-                    j = j2
-
-                variants.append({
-                    "name": v_name,
-                    "price": v_price,
-                    "duration": v_dur,
-                })
-
-            # jeżeli faktycznie zebraliśmy >1 wariant (albo 1 + Cena od), zapisujemy jako warianty
-            if len(variants) >= 2:
-                current_cat["items"].append({
-                    "name": service_name,
-                    "variants": variants,
-                })
-            else:
-                # brak realnych wariantów → zwykły wpis
-                current_cat["items"].append({
-                    "name": service_name,
-                    "price": base_price,
-                    "duration": base_dur,
-                })
-
-            i = j
-            continue
-
-        # zwykły wpis
-        current_cat["items"].append({
-            "name": service_name,
-            "price": base_price,
-            "duration": base_dur,
-        })
-        i = j
-        continue
+    categories_out: List[Dict[str, Any]] = []
+    for cat_name, s, e in split_categories(sec):
+        cat_lines = sec[s:e]
+        items = parse_category(cat_lines)
+        if items:
+            categories_out.append({"name": cat_name, "items": items})
 
     payload = {
         "source": BOOKSY_URL,
         "updated_at": datetime.now(timezone.utc).isoformat(),
-        "categories": [c for c in categories if c.get("items")],
+        "categories": categories_out,
     }
     return payload
 
 if __name__ == "__main__":
     data = parse()
-    os.makedirs("data", exist_ok=True)
+    os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     total = 0
     for c in data["categories"]:
-        total += len(c.get("items", []))
-    print(f"OK -> {OUT_PATH} ({total} grup/usług)")
+        for it in c["items"]:
+            if "variants" in it:
+                total += len(it["variants"])
+            else:
+                total += 1
+    print(f"OK -> {OUT_PATH} ({total} pozycji/wierszy)")
