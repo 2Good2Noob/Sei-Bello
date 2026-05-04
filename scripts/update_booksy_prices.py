@@ -5,7 +5,7 @@ import os
 def fetch_booksy_prices():
     # URL do API Booksy (używamy publicznego endpointu na podstawie Twojego ID salonu)
     # Na podstawie Twojego repozytorium ID to prawdopodobnie część Twojego profilu
-    API_URL = "https://booksy.com/api/pl/v2/customer/businesses/223403/services" # Upewnij się, że ID 223403 jest poprawne dla Twojego salonu
+    API_URL = "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile" # Upewnij się, że ID 223403 jest poprawne dla Twojego salonu
     
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
