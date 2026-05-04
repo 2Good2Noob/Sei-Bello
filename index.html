@@ -383,7 +383,24 @@
     details[open] .chev{ transform: rotate(180deg); }
 
     .acc__body{ padding:0 18px 16px; border-top:1px solid rgba(255,255,255,.10); }
-
+    /* Price groups (warianty) */
+    .groupTitle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:12px 0;
+      border-bottom:1px dashed rgba(255,255,255,.12);
+    }
+    .groupTitle b{ font-size:13px; }
+    .groupTitle span{ font-size:12px; color:var(--muted2); }
+    
+    .priceRow.is-sub{
+      padding-left:10px;
+    }
+    .priceRow.is-sub .svc b{
+      font-weight:600;
+    }
     .priceRow{
       display:grid;
       grid-template-columns: 1fr auto;
