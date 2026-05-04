@@ -1,92 +1,346 @@
-import json
-import os
-from datetime import datetime, timezone
-# Zamiast zwykłego requests, używamy curl_cffi, które świetnie omija Cloudflare
-from curl_cffi import requests
-
-def fetch_booksy_data():
-    BUSINESS_ID = "214823"
-    API_URL = f"https://booksy.com/api/pl/v2/customer/businesses/{BUSINESS_ID}/services"
-    OUT_PATH = "data/booksy-prices.json"
-    
-    headers = {
-        'Accept': 'application/json',
-        'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
-        'Origin': 'https://booksy.com',
-        'Referer': f'https://booksy.com/pl-pl/{BUSINESS_ID}',
-    }
-
-    try:
-        print(f"Pobieranie danych dla salonu ID: {BUSINESS_ID} z użyciem curl_cffi...")
-        
-        # Kluczowa zmiana: impersonate="chrome110" udaje prawdziwą przeglądarkę na poziomie protokołu TLS
-        response = requests.get(
-            API_URL, 
-            headers=headers, 
-            impersonate="chrome110", 
-            timeout=30
-        )
-        
-        response.raise_for_status()
-        data = response.json()
-        
-        if not data.get('data'):
-            raise ValueError("Otrzymano pustą listę usług z API. Możliwa blokada.")
-
-        structured_data = {
-            "source": f"https://booksy.com/api/pl/v2/customer/businesses/{BUSINESS_ID}/services",
-            "updated_at": datetime.now(timezone.utc).isoformat(),
-            "categories": []
+{
+  "source": "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator",
+  "updated_at": "2026-05-04T14:27:16.764779+00:00",
+  "categories": [
+    {
+      "name": "Popularne usługi",
+      "items": [
+        {
+          "name": "Strzyżenie męskie klasyczne",
+          "price": "50,00 zł",
+          "duration": "30min"
+        },
+        {
+          "name": "Strzyżenie damskie + mycie + stylizacja",
+          "variants": [
+            {
+              "name": "Strzyżenie damskie - włosy średnie/długie",
+              "price": "70,00 zł",
+              "duration": "1g"
+            },
+            {
+              "name": "Strzyżenie damskie - włosy krótkie(do lini uszu)",
+              "price": "100,00 zł",
+              "duration": "1g 30min"
+            },
+            {
+              "name": "Metamorfoza fryzury strzyżenie z średnich/długich na krótsze/krótkie",
+              "price": "210,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy średnie - do ramion",
+              "price": "250,00 zł+",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy długie gęste",
+              "price": "185,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy krótkie-do lini uszu",
+              "price": "230,00 zł",
+              "duration": "2g"
+            }
+          ]
         }
-
-        for group in data.get('data', []):
-            category = {"name": group.get('name'), "items": []}
-            for service in group.get('services', []):
-                service_entry = {"name": service.get('name'), "variants": []}
-                variants = service.get('variants', [])
-                if variants:
-                    for v in variants:
-                        price_val = v.get('price')
-                        duration_val = v.get('duration')
-                        variant_data = {
-                            "name": v.get('name') if v.get('name') else service.get('name'),
-                            "price": f"{int(price_val)},00 zł" if price_val else "Cena zmienna",
-                            "duration": ""
-                        }
-                        if duration_val:
-                            h = duration_val // 3600
-                            m = (duration_val % 3600) // 60
-                            if h > 0:
-                                variant_data["duration"] = f"{h}g" + (f" {m}min" if m > 0 else "")
-                            else:
-                                variant_data["duration"] = f"{m}min"
-                        service_entry["variants"].append(variant_data)
-                
-                if len(service_entry["variants"]) == 1:
-                    category["items"].append({
-                        "name": service_entry["name"],
-                        "price": service_entry["variants"][0]["price"],
-                        "duration": service_entry["variants"][0]["duration"]
-                    })
-                elif service_entry["variants"]:
-                    category["items"].append(service_entry)
-            
-            if category["items"]:
-                structured_data["categories"].append(category)
-
-        os.makedirs(os.path.dirname(OUT_PATH), exist_ok=True)
-        with open(OUT_PATH, 'w', encoding='utf-8') as f:
-            json.dump(structured_data, f, ensure_ascii=False, indent=2)
-        
-        print(f"Sukces! Plik zapisany w {OUT_PATH}")
-
-    except Exception as e:
-        print(f"BŁĄD KRYTYCZNY: {e}")
-        if hasattr(e, 'response') and e.response is not None:
-            print(f"Kod błędu: {e.response.status_code}")
-            print(f"Treść odpowiedzi: {e.response.text[:200]}")
-        # Przerywamy skrypt z błędem, żeby GitHub Actions zaświeciło się na czerwono
-        exit(1)
-
-if __name__ == "__main__":
-    fetch_booksy_data()
+      ]
+    },
+    {
+      "name": "Usługi męskie",
+      "items": [
+        {
+          "name": "Strzyżenie męskie klasyczne",
+          "price": "50,00 zł",
+          "duration": "30min"
+        },
+        {
+          "name": "Strzyżenie męskie- włosy średnie",
+          "price": "65,00 zł",
+          "duration": "1g"
+        },
+        {
+          "name": "Strzyżenie męskie - włosy długie",
+          "price": "75,00 zł",
+          "duration": "1g"
+        },
+        {
+          "name": "Cover męski",
+          "price": "40,00 zł",
+          "duration": "15min"
+        }
+      ]
+    },
+    {
+      "name": "Usługi damskie",
+      "items": [
+        {
+          "name": "Strzyżenie damskie + mycie + stylizacja",
+          "variants": [
+            {
+              "name": "Strzyżenie damskie - włosy średnie/długie",
+              "price": "70,00 zł",
+              "duration": "1g"
+            },
+            {
+              "name": "Strzyżenie damskie - włosy krótkie(do lini uszu)",
+              "price": "100,00 zł",
+              "duration": "1g 30min"
+            },
+            {
+              "name": "Metamorfoza fryzury strzyżenie z średnich/długich na krótsze/krótkie",
+              "price": "50,00 zł",
+              "duration": "30min"
+            }
+          ]
+        },
+        {
+          "name": "Strzyżenie grzywki",
+          "price": "15,00 zł+",
+          "duration": "15min"
+        },
+        {
+          "name": "Mycie+modelowanie/prostowanie",
+          "price": "70,00 zł+",
+          "duration": "1g"
+        },
+        {
+          "name": "Włosy średnie/długie",
+          "price": "60,00 zł+",
+          "duration": "1g"
+        }
+      ]
+    },
+    {
+      "name": "Koloryzacja",
+      "items": [
+        {
+          "name": "Koloryzacja włosów",
+          "variants": [
+            {
+              "name": "Włosy średnie - do ramion",
+              "price": "250,00 zł+",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy długie gęste",
+              "price": "185,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy krótkie-do lini uszu",
+              "price": "230,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy długie",
+              "price": "180,00 zł",
+              "duration": "1g 30min"
+            }
+          ]
+        },
+        {
+          "name": "Farbowanie-odrost",
+          "variants": [
+            {
+              "name": "Farbowanie-odrost + strzyżenie",
+              "price": "500,00 zł+",
+              "duration": "5g"
+            },
+            {
+              "name": "Włosy średnie do ramion",
+              "price": "700,00 zł+",
+              "duration": "5g 30min"
+            },
+            {
+              "name": "Włosy długie bardzo gęste",
+              "price": "600,00 zł+",
+              "duration": "5g 30min"
+            },
+            {
+              "name": "Włosy długie",
+              "price": "280,00 zł+",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy średnie do ramion",
+              "price": "300,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy długie/gęste",
+              "price": "180,00 zł",
+              "duration": "1g 30min"
+            }
+          ]
+        },
+        {
+          "name": "Wariant 1",
+          "price": "200,00 zł",
+          "duration": "2g"
+        },
+        {
+          "name": "Tonowanie włosy długie/gęste",
+          "price": "280,00 zł",
+          "duration": "3g"
+        },
+        {
+          "name": "Rozjaśnianie odrost - włosy krótkie",
+          "price": "450,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Rozjaśnianie odrost- włosy długię/gęste",
+          "price": "350,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Rozjaśnianie odrost-włosy średnie",
+          "price": "420,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Rozjaśnianie odrost-włosy dlugie",
+          "price": "420,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy długie",
+          "price": "390,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy średnie",
+          "price": "450,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy długie/gęste",
+          "price": "420,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy średnie",
+          "price": "450,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy długie",
+          "price": "500,00 zł+",
+          "duration": "5g"
+        },
+        {
+          "name": "Włosy długię/gęste",
+          "price": "450,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy długie",
+          "price": "420,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy średnie",
+          "price": "480,00 zł+",
+          "duration": "4g 30min"
+        },
+        {
+          "name": "Włosy gęste",
+          "price": "450,00 zł",
+          "duration": "4g"
+        },
+        {
+          "name": "Baleyage - włosy gęste",
+          "price": "420,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Beleyage - włosy średnie",
+          "price": "330,00 zł+",
+          "duration": "3g"
+        }
+      ]
+    },
+    {
+      "name": "Zabiegi regenerujące włosy",
+      "items": [
+        {
+          "name": "Regeneracja włosów-botox",
+          "price": "200,00 zł",
+          "duration": "1g 30min"
+        },
+        {
+          "name": "Włosy długie",
+          "price": "180,00 zł",
+          "duration": "1g 30min"
+        },
+        {
+          "name": "Włosy średnie",
+          "price": "250,00 zł+",
+          "duration": "1g 30min"
+        },
+        {
+          "name": "Włosy średnie (do ramion)",
+          "price": "280,00 zł",
+          "duration": "2g"
+        }
+      ]
+    },
+    {
+      "name": "Prostowanie",
+      "items": [
+        {
+          "name": "Nanoplastia",
+          "price": "450,00 zł+",
+          "duration": "3g"
+        },
+        {
+          "name": "Włosy średnie (do ramion)",
+          "price": "600,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy długie/gęste",
+          "price": "500,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy długie (poza ramiona)",
+          "price": "350,00 zł+",
+          "duration": "3g"
+        }
+      ]
+    },
+    {
+      "name": "Fryzura okolicznościowa",
+      "items": [
+        {
+          "name": "Upięcie/fryzura okolicznościowa",
+          "price": "150,00 zł+",
+          "duration": "1g 30min"
+        },
+        {
+          "name": "Loki/fale okolicznościowe",
+          "price": "180,00 zł+",
+          "duration": "1g 30min"
+        },
+        {
+          "name": "Fale Hollywood",
+          "price": "200,00 zł+",
+          "duration": "2g"
+        }
+      ]
+    },
+    {
+      "name": "Trwała ondulacja",
+      "items": [
+        {
+          "name": "Trwała ondulacyjna-włosy średnie",
+          "price": "200,00 zł+",
+          "duration": "2g 30min"
+        }
+      ]
+    }
+  ]
+}
