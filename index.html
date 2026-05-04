@@ -1006,18 +1006,15 @@
   // Mobile menu
   const burger = document.getElementById('burger');
   const mobile = document.getElementById('mobile');
-
-  burger?.addEventListener('click', () => {
+  burger.addEventListener('click', () => {
     const expanded = burger.getAttribute('aria-expanded') === 'true';
     burger.setAttribute('aria-expanded', String(!expanded));
-    // hidden: true = schowane, false = pokazane
-    if (mobile) mobile.hidden = expanded;
+    mobile.hidden = expanded;
   });
-
-  mobile?.addEventListener('click', (e) => {
-    if (e.target && e.target.matches && e.target.matches('a')) {
-      burger?.setAttribute('aria-expanded', 'false');
-      if (mobile) mobile.hidden = true;
+  mobile.addEventListener('click', (e) => {
+    if (e.target.matches('a')) {
+      burger.setAttribute('aria-expanded', 'false');
+      mobile.hidden = true;
     }
   });
 
@@ -1032,45 +1029,49 @@
 
   // === Cennik z JSON (data/booksy-prices.json) ===
   function escapeHtml(str){
-    return String(str ?? '').replace(/[&<>"']/g, (m) => ({
+    return String(str).replace(/[&<>"']/g, (m) => ({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
     }[m]));
   }
 
-  // Wyciąga ceny z tekstu (obsługuje "40,00 zł 34,00 zł" albo "250,00 zł+")
-  function extractPriceTokens(priceStr){
-    const s = String(priceStr ?? '');
-    const m = s.match(/\b\d{1,4},\d{2}\s*zł\+?\b/gi);
-    if (m && m.length) return m;
-    return s.trim() ? [s.trim()] : [];
-  }
-
-  // Zamienia "185,00 zł" -> 18500 (grosze) żeby dało się policzyć min
-  function priceToCents(priceToken){
-    const s = String(priceToken ?? '');
-    const m = s.match(/(\d{1,4}),(\d{2})/);
-    if (!m) return null;
-    const zł = parseInt(m[1], 10);
-    const gr = parseInt(m[2], 10);
-    if (Number.isNaN(zł) || Number.isNaN(gr)) return null;
-    return zł * 100 + gr;
-  }
-
-  // Warianty na Booksy najczęściej zaczynają się od "Włosy ..."
   function isVariantLabel(name){
-    const n = String(name ?? '').trim().toLowerCase();
-    return n.startsWith('włosy') || n.startsWith('wlosy') || n.startsWith('wariant');
+    const n = String(name || '').trim().toLowerCase();
+    return (
+      n.startsWith('włosy') ||
+      n.startsWith('wlosy') ||
+      n.startsWith('wariant') ||
+      n.includes('do ramion') ||
+      n.includes('do lini') ||
+      n.includes('gęste') || n.includes('geste') ||
+      n.includes('krótk') || n.includes('krotk') ||
+      n.includes('średni') || n.includes('sredni') ||
+      n.includes('dług') || n.includes('dlug')
+    );
   }
 
-  function renderMoneyHTML(priceStr){
-    const tokens = extractPriceTokens(priceStr);
-    // Jeśli są 2 ceny, pokazujemy starą przekreśloną + nową
-    if (tokens.length >= 2){
-      const oldP = tokens[0];
-      const newP = tokens[tokens.length - 1];
-      return `<span class="old">${escapeHtml(oldP)}</span><b>${escapeHtml(newP)}</b>`;
-    }
-    return `<b>${escapeHtml(tokens[0] ?? '')}</b>`;
+  function addRow(body, item, isSub=false){
+    const row = document.createElement('div');
+    row.className = 'priceRow' + (isSub ? ' is-sub' : '');
+    const price = (item.price && item.price.trim()) ? item.price : '—';
+    const dur   = (item.duration && item.duration.trim()) ? item.duration : '';
+    row.innerHTML = `
+      <div class="svc">
+        <b>${escapeHtml(item.name || '')}</b>
+        <span>${escapeHtml(dur)}</span>
+      </div>
+      <div class="money"><b>${escapeHtml(price)}</b></div>
+    `;
+    body.appendChild(row);
+  }
+
+  function addGroupTitle(body, title, count){
+    const t = document.createElement('div');
+    t.className = 'groupTitle';
+    t.innerHTML = `
+      <b>${escapeHtml(title)}</b>
+      <span>${count ? `${count} warianty` : 'Warianty'}</span>
+    `;
+    body.appendChild(t);
   }
 
   async function loadPriceList(){
@@ -1079,10 +1080,10 @@
     if (!listEl) return;
 
     try{
-      // bierzemy JSON z tej samej strony (GitHub Pages), więc bez CORS i bez rawgithub
-      const u = new URL('data/booksy-prices.json', window.location.href);
-      u.searchParams.set('v', Date.now()); // cache-bust
-      const res = await fetch(u.toString(), { cache: 'no-store' });
+      // Pobieraj z GitHub Pages (same-origin) + cache-bust
+      const urlObj = new URL('./data/booksy-prices.json', window.location.href);
+      urlObj.searchParams.set('v', Date.now());
+      const res = await fetch(urlObj.toString(), { cache: 'no-store' });
       if(!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data = await res.json();
@@ -1104,7 +1105,6 @@
 
         const details = document.createElement('details');
         details.className = 'acc reveal';
-
         const catName = (cat.name || '').toLowerCase();
         details.open = catName.includes('popularne') || idx === 0;
 
@@ -1124,94 +1124,65 @@
         const body = document.createElement('div');
         body.className = 'acc__body';
 
-        function addRow(item, isSub=false){
-          const row = document.createElement('div');
-          row.className = 'priceRow' + (isSub ? ' is-sub' : '');
-          row.innerHTML = `
-            <div class="svc">
-              <b>${escapeHtml(item.name || '')}</b>
-              <span>${escapeHtml(item.duration || '')}</span>
-            </div>
-            <div class="money">${renderMoneyHTML(item.price || '')}</div>
-          `;
-          body.appendChild(row);
-        }
-
-        function addGroupTitle(title, metaText){
-          const t = document.createElement('div');
-          t.className = 'groupTitle';
-          t.innerHTML = `
-            <b>${escapeHtml(title)}</b>
-            <span>${escapeHtml(metaText || 'Warianty')}</span>
-          `;
-          body.appendChild(t);
-        }
-
-        // Render z grupowaniem "Włosy..." pod nagłówkiem (jak na Booksy)
+        // Render z grupowaniem “X włosów” -> warianty “Włosy ...”
         for (let i = 0; i < items.length; i++){
-          const item = items[i];
+          const base = items[i];
           const next = items[i + 1];
 
-          // Jeśli po usłudze lecą warianty "Włosy...", to robimy nagłówek grupy
-          if (next && isVariantLabel(next.name) && !isVariantLabel(item.name)) {
-            // zbierz warianty
+          const baseName = String(base?.name || '');
+          const canGroup =
+            next &&
+            isVariantLabel(next.name) &&
+            !isVariantLabel(baseName) &&
+            /włos|wlos/i.test(baseName); // np. “Koloryzacja włosów”
+
+          if (canGroup){
+            // zbierz warianty (w tym placeholdery bez ceny)
             const variants = [];
             let j = i + 1;
-            while (j < items.length && isVariantLabel(items[j].name)) {
-              variants.push(items[j]);
+            while (j < items.length && isVariantLabel(items[j].name)){
+              variants.push({ ...items[j] });
               j++;
             }
 
-            // wylicz "od X zł" jako min z ceny usługi + cen wariantów (jeśli są)
-            const cents = [];
-            const itemTokens = extractPriceTokens(item.price);
-            const itemLast = itemTokens[itemTokens.length - 1];
-            const itemC = priceToCents(itemLast);
-            if (itemC !== null) cents.push(itemC);
+            // Wyrównanie cen/czasów:
+            // 1) cena/czas z “base” przypisujemy do pierwszego wariantu
+            // 2) pozostałe ceny/czasy bierzemy po kolei z wariantów które je mają
+            const prices = [
+              base.price,
+              ...variants.map(v => v.price).filter(p => p && String(p).trim())
+            ];
+            const durs = [
+              base.duration,
+              ...variants.map(v => v.duration).filter(d => d && String(d).trim())
+            ];
 
-            variants.forEach(v => {
-              const toks = extractPriceTokens(v.price);
-              const last = toks[toks.length - 1];
-              const c = priceToCents(last);
-              if (c !== null) cents.push(c);
+            variants.forEach((v, k) => {
+              if (prices[k]) v.price = prices[k];
+              if (durs[k])   v.duration = durs[k];
             });
 
-            let meta = 'Warianty';
-            if (cents.length){
-              const min = Math.min(...cents);
-              const zł = Math.floor(min / 100);
-              const gr = String(min % 100).padStart(2, '0');
-              meta = `od ${zł},${gr} zł`;
-              if (item.duration) meta += ` • ${item.duration}`;
-            } else if (item.duration) {
-              meta = `Warianty • ${item.duration}`;
-            }
+            addGroupTitle(body, baseName, variants.length);
+            variants.forEach(v => addRow(body, v, true));
 
-            addGroupTitle(item.name || 'Usługa', meta);
-
-            // pokaż tylko warianty (nagłówek nie jest pozycją)
-            variants.forEach(v => addRow(v, true));
-
-            // przeskocz przetworzone warianty
             i = j - 1;
             continue;
           }
 
-          // normalna pozycja (bez wariantów)
-          addRow(item, false);
+          // normalna pozycja
+          addRow(body, base, false);
         }
 
         details.appendChild(body);
         listEl.appendChild(details);
 
-        // reveal dla dynamicznych elementów
         io.observe(details);
       });
 
     } catch (err){
       listEl.innerHTML = `
         <div class="note">
-          Nie udało się pobrać cennika (brak pliku lub błąd). Najaktualniejsze ceny znajdziesz w
+          Nie udało się pobrać cennika. Najaktualniejsze ceny znajdziesz w
           <a href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile"
              target="_blank" rel="noopener" style="text-decoration:underline">Booksy</a>.
         </div>
@@ -1228,52 +1199,46 @@
   const modalClose = document.getElementById('modalClose');
 
   function openModal(src, title, alt){
-    modal?.setAttribute('aria-hidden', 'false');
-    if (modalImg) {
-      modalImg.src = src;
-      modalImg.alt = alt || title || 'Zdjęcie';
-    }
-    if (modalTitle) modalTitle.textContent = title || 'Podgląd';
+    modal.setAttribute('aria-hidden', 'false');
+    modalImg.src = src;
+    modalImg.alt = alt || title || 'Zdjęcie';
+    modalTitle.textContent = title || 'Podgląd';
     document.body.style.overflow = 'hidden';
-    modalClose?.focus();
+    modalClose.focus();
   }
   function closeModal(){
-    modal?.setAttribute('aria-hidden', 'true');
-    if (modalImg) modalImg.src = '';
+    modal.setAttribute('aria-hidden', 'true');
+    modalImg.src = '';
     document.body.style.overflow = '';
   }
 
   document.querySelectorAll('.gallery .g').forEach(fig => {
     fig.addEventListener('click', () => {
       const img = fig.querySelector('img');
-      if (!img) return;
       openModal(img.src, fig.dataset.title, img.alt);
     });
   });
 
-  modalClose?.addEventListener('click', closeModal);
-  modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal?.getAttribute('aria-hidden') === 'false') closeModal();
+    if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') closeModal();
   });
 
   // Contact form -> mailto
   const form = document.getElementById('contactForm');
   const hint = document.getElementById('formHint');
-
-  form?.addEventListener('submit', (e) => {
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const name = document.getElementById('name')?.value?.trim() || '';
-    const phone = document.getElementById('phone')?.value?.trim() || '';
-    const service = document.getElementById('service')?.value?.trim() || '';
-    const msg = document.getElementById('msg')?.value?.trim() || '';
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const service = document.getElementById('service').value.trim();
+    const msg = document.getElementById('msg').value.trim();
 
     if (!name || !phone || !msg) {
-      if (hint) {
-        hint.textContent = 'Uzupełnij: Imię, Telefon oraz Wiadomość.';
-        hint.style.color = 'rgba(255,255,255,.86)';
-      }
+      hint.textContent = 'Uzupełnij: Imię, Telefon oraz Wiadomość.';
+      hint.style.color = 'rgba(255,255,255,.86)';
       return;
     }
 
@@ -1289,18 +1254,16 @@ ${msg}`
     );
 
     window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
-    if (hint) {
-      hint.textContent = 'Otwieram program pocztowy…';
-      hint.style.color = 'rgba(255,255,255,.72)';
-    }
+    hint.textContent = 'Otwieram program pocztowy…';
+    hint.style.color = 'rgba(255,255,255,.72)';
     form.reset();
   });
 
   // Optional: close mobile menu on resize
   window.addEventListener('resize', () => {
     if (window.innerWidth > 760) {
-      burger?.setAttribute('aria-expanded', 'false');
-      if (mobile) mobile.hidden = true;
+      burger.setAttribute('aria-expanded', 'false');
+      mobile.hidden = true;
     }
   });
 </script>
