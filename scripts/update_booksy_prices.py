@@ -172,7 +172,7 @@ def parse() -> Dict[str, Any]:
     )
     r.raise_for_status()
 
-    soup = BeautifulSoup(r.text, "lxml")
+    soup = BeautifulSoup(r.text, "html.parser")
 
     h_services = find_heading(soup, "Usługi")
     if not h_services:
