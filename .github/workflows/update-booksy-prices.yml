@@ -2,12 +2,12 @@ name: Update Booksy price list (daily)
 
 on:
   schedule:
-    # Uruchamia się codziennie o 5:15 rano
+    # Uruchamia się codziennie o 5:15 rano czasu polskiego
     - cron: "15 05 * * *"
-  workflow_dispatch: # Pozwala na ręczne uruchomienie przyciskiem
+  workflow_dispatch: # Pozwala na ręczne uruchomienie (przycisk Run workflow)
 
 permissions:
-  contents: write # Wymagane, aby GitHub Actions mogło zapisać zmiany w pliku
+  contents: write # Wymagane uprawnienie, aby móc zapisać zaktualizowany plik
 
 jobs:
   update:
@@ -24,22 +24,22 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # Instalujemy curl_cffi, aby udawać prawdziwą przeglądarkę
-          pip install curl_cffi
+          # Używamy standardowych bibliotek do scrapowania strony HTML
+          pip install requests beautifulsoup4
 
-      - name: Generate JSON from Booksy API
+      - name: Generate JSON from Booksy HTML
         run: python scripts/update_booksy_prices.py
 
       - name: Commit & push if changed
         run: |
-          # Konfiguracja bota GitHuba
+          # Konfiguracja tożsamości bota
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Dodanie pliku do poczekalni (staging area)
+          # Dodanie pliku do stagingu (poczekalni)
           git add data/booksy-prices.json
           
-          # Sprawdzenie, czy zawartość pliku różni się od tego w repozytorium
+          # Jeśli nic się nie zmieniło w poczekalni w stosunku do repozytorium
           if git diff --staged --quiet; then
             echo "Brak zmian w cenach na Booksy. Pomijam aktualizację."
           else
