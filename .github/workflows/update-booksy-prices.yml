@@ -2,39 +2,47 @@ name: Update Booksy price list (daily)
 
 on:
   schedule:
+    # Uruchamia się codziennie o 5:15 rano czasu polskiego
     - cron: "15 05 * * *"
-      timezone: "Europe/Warsaw"
-  workflow_dispatch:
+  workflow_dispatch: # Pozwala na ręczne uruchomienie przyciskiem w zakładce Actions
 
 permissions:
-  contents: write
+  contents: write # Kluczowe uprawnienie pozwalające Action na zapisywanie plików w repozytorium
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4
+          pip install requests
 
-      - name: Generate JSON
+      - name: Generate JSON from Booksy API
         run: python scripts/update_booksy_prices.py
 
       - name: Commit & push if changed
         run: |
-          if git diff --quiet; then
-            echo "No changes."
-            exit 0
-          fi
+          # Konfiguracja bota GitHub Actions
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Dodanie wygenerowanego pliku do poczekalni (staging)
           git add data/booksy-prices.json
-          git commit -m "chore: update Booksy price list"
-          git push
+          
+          # Sprawdzenie, czy faktycznie wystąpiły zmiany w stosunku do ostatniej wersji w repozytorium
+          if git diff --staged --quiet; then
+            echo "Brak zmian w cenach na Booksy. Pomijam aktualizację."
+          else
+            echo "Wykryto zmiany. Wysyłam aktualizację do repozytorium."
+            git commit -m "chore: auto-update Booksy price list"
+            git push
+          fi
