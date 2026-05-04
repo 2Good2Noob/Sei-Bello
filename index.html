@@ -1009,7 +1009,92 @@
     }, { threshold: 0.12 });
 
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    // === Cennik z JSON (data/booksy-prices.json) ===
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, (m) => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+  }[m]));
+}
 
+async function loadPriceList(){
+  const listEl = document.getElementById('priceList');
+  const updEl  = document.getElementById('priceUpdated');
+  if (!listEl) return;
+
+  try{
+    // cache-bust (GitHub Pages potrafi cache’ować statyczne pliki)
+    const url = `./data/booksy-prices.json?v=${Date.now()}`;
+    const res = await fetch(url, { cache: 'no-store' });
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+
+    if (updEl && data.updated_at){
+      updEl.textContent = new Date(data.updated_at).toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' });
+    }
+
+    const cats = Array.isArray(data.categories) ? data.categories : [];
+    listEl.innerHTML = '';
+
+    if(!cats.length){
+      listEl.innerHTML = `<div class="note">Brak danych cennika. Najaktualniejsze ceny znajdziesz w Booksy.</div>`;
+      return;
+    }
+
+    cats.forEach((cat, idx) => {
+      const items = Array.isArray(cat.items) ? cat.items : [];
+
+      const details = document.createElement('details');
+      details.className = 'acc reveal';
+      // Otwórz “Popularne usługi” albo pierwszą kategorię:
+      const name = (cat.name || '').toLowerCase();
+      details.open = name.includes('popularne') || idx === 0;
+
+      const summary = document.createElement('summary');
+      summary.innerHTML = `
+        <div class="acc__title">
+          <div class="icon" aria-hidden="true" style="width:36px;height:36px;border-radius:14px">💇</div>
+          <div>
+            <b>${escapeHtml(cat.name || 'Usługi')}</b><br>
+            <span>${items.length} pozycji</span>
+          </div>
+        </div>
+        <div class="chev" aria-hidden="true">⌄</div>
+      `;
+      details.appendChild(summary);
+
+      const body = document.createElement('div');
+      body.className = 'acc__body';
+
+      items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'priceRow';
+        row.innerHTML = `
+          <div class="svc"><b>${escapeHtml(item.name || '')}</b><span>${escapeHtml(item.duration || '')}</span></div>
+          <div class="money"><b>${escapeHtml(item.price || '')}</b></div>
+        `;
+        body.appendChild(row);
+      });
+
+      details.appendChild(body);
+      listEl.appendChild(details);
+
+      // żeby reveal działał też na dynamicznie dodanych elementach
+      if (typeof io !== 'undefined') io.observe(details);
+    });
+
+  } catch (err){
+    listEl.innerHTML = `
+      <div class="note">
+        Nie udało się pobrać cennika (brak pliku lub błąd). Najaktualniejsze ceny znajdziesz w
+        <a href="https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator?do=invite&utm_medium=profile_share_from_profile"
+           target="_blank" rel="noopener" style="text-decoration:underline">Booksy</a>.
+      </div>
+    `;
+  }
+}
+
+loadPriceList();
     // Gallery modal
     const modal = document.getElementById('modal');
     const modalImg = document.getElementById('modalImg');
