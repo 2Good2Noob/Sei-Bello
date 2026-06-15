@@ -1,6 +1,6 @@
 {
   "source": "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator",
-  "updated_at": "2026-06-13T08:32:03.224844+00:00",
+  "updated_at": "2026-06-15T11:23:25.200331+00:00",
   "categories": [
     {
       "name": "Popularne usługi",
@@ -27,11 +27,11 @@
         },
         {
           "name": "Koloryzacja włosów",
-          "price": "185,00 zł",
+          "price": "250,00 zł+",
           "duration": "2g"
         },
         {
-          "name": "Włosy krótkie-do lini uszu",
+          "name": "Włosy długie gęste",
           "price": "230,00 zł",
           "duration": "2g"
         },
@@ -42,7 +42,7 @@
         },
         {
           "name": "Włosy średnie - do ramion",
-          "price": "250,00 zł+",
+          "price": "185,00 zł",
           "duration": "2g"
         }
       ]
@@ -117,11 +117,11 @@
       "items": [
         {
           "name": "Koloryzacja włosów",
-          "price": "185,00 zł",
+          "price": "250,00 zł+",
           "duration": "2g"
         },
         {
-          "name": "Włosy krótkie-do lini uszu",
+          "name": "Włosy długie gęste",
           "price": "230,00 zł",
           "duration": "2g"
         },
@@ -132,7 +132,7 @@
         },
         {
           "name": "Włosy średnie - do ramion",
-          "price": "250,00 zł+",
+          "price": "185,00 zł",
           "duration": "2g"
         },
         {
@@ -152,12 +152,12 @@
         },
         {
           "name": "Włosy średnie do ramion",
-          "price": "700,00 zł+",
+          "price": "600,00 zł+",
           "duration": "5g 30min"
         },
         {
-          "name": "Włosy długie bardzo gęste",
-          "price": "600,00 zł+",
+          "name": "Włosy długie",
+          "price": "700,00 zł+",
           "duration": "5g 30min"
         },
         {
@@ -187,6 +187,11 @@
         },
         {
           "name": "Rozjaśnianie odrost - włosy krótkie",
+          "price": "450,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Rozjaśnianie odrost- włosy długię/gęste",
           "price": "420,00 zł+",
           "duration": "4g"
         },
@@ -196,17 +201,7 @@
           "duration": "4g"
         },
         {
-          "name": "Rozjaśnianie odrost-włosy średnie",
-          "price": "450,00 zł+",
-          "duration": "4g"
-        },
-        {
           "name": "Refleksy/sombre",
-          "price": "450,00 zł+",
-          "duration": "4g"
-        },
-        {
-          "name": "Włosy długie/gęste",
           "price": "390,00 zł+",
           "duration": "4g"
         },
@@ -216,43 +211,48 @@
           "duration": "4g"
         },
         {
-          "name": "Dekoloryzacja włosów",
-          "price": "420,00 zł+",
+          "name": "Włosy długie",
+          "price": "450,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Włosy średnie",
+          "name": "Dekoloryzacja włosów",
           "price": "450,00 zł+",
           "duration": "4g"
         },
         {
           "name": "Włosy długie",
+          "price": "420,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy średnie",
           "price": "500,00 zł+",
           "duration": "5g"
         },
         {
           "name": "Rozjaśnianie włosów-globalny blond",
-          "price": "420,00 zł+",
-          "duration": "4g"
-        },
-        {
-          "name": "Włosy średnie",
           "price": "450,00 zł+",
           "duration": "4g"
         },
         {
           "name": "Włosy długie",
+          "price": "420,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy średnie",
           "price": "480,00 zł+",
           "duration": "4g 30min"
         },
         {
           "name": "Baleyage",
-          "price": "450,00 zł",
+          "price": "420,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Baleyage - włosy gęste",
-          "price": "420,00 zł+",
+          "name": "Beleyage - włosy średnie",
+          "price": "450,00 zł",
           "duration": "4g"
         },
         {
@@ -287,12 +287,12 @@
         },
         {
           "name": "Silna regeneracja po koloryzacji-w tym samym dniu",
-          "price": "210,00 zł",
+          "price": "180,00 zł",
           "duration": "1g"
         },
         {
-          "name": "Włosy długie",
-          "price": "180,00 zł",
+          "name": "Włosy średnie",
+          "price": "210,00 zł",
           "duration": "1g"
         }
       ]
@@ -307,12 +307,12 @@
         },
         {
           "name": "Włosy średnie (do ramion)",
-          "price": "500,00 zł+",
+          "price": "600,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Włosy długie (poza ramiona)",
-          "price": "600,00 zł+",
+          "name": "Włosy długie/gęste",
+          "price": "500,00 zł+",
           "duration": "4g"
         },
         {
@@ -347,12 +347,12 @@
       "items": [
         {
           "name": "1 usługa",
-          "price": "200,00 zł+",
+          "price": "230,00 zł",
           "duration": "2g 30min"
         },
         {
-          "name": "Trwała ondulacja-włosy krótkie",
-          "price": "230,00 zł",
+          "name": "Trwała ondulacyjna-włosy średnie",
+          "price": "200,00 zł+",
           "duration": "2g 30min"
         }
       ]
