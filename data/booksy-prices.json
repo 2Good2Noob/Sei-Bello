@@ -1,6 +1,6 @@
 {
   "source": "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator",
-  "updated_at": "2026-07-31T08:09:37.274443+00:00",
+  "updated_at": "2026-08-01T07:37:51.065591+00:00",
   "categories": [
     {
       "name": "Popularne usługi",
@@ -35,11 +35,6 @@
           "variants": [
             {
               "name": "Koloryzacja + strzyżenie + stylizacja końcowa . W cenę i czas wchodzi strzyżenie, nie trzeba zaznaczać dwóch usług",
-              "price": "230,00 zł",
-              "duration": "2g"
-            },
-            {
-              "name": "Włosy długie",
               "price": "210,00 zł",
               "duration": "2g"
             },
@@ -50,8 +45,18 @@
             },
             {
               "name": "Włosy długie gęste",
+              "price": "230,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy długie",
               "price": "185,00 zł",
               "duration": "2g"
+            },
+            {
+              "name": "Nowoczesna technika koloryzacji polegająca na rozjaśnianiu mikroskopijnych, niezwykle cienkich pasm włosów przypominających nitki. Daje to efekt miękkich, wielowymiarowych i gęstych naturalnych refleksów bez ostrych odcięć i kontrastów + strzyżenie + pielęgnacja OLAPLEX",
+              "price": "650,00 zł",
+              "duration": "6g"
             }
           ]
         }
@@ -140,11 +145,6 @@
           "variants": [
             {
               "name": "Koloryzacja + strzyżenie + stylizacja końcowa . W cenę i czas wchodzi strzyżenie, nie trzeba zaznaczać dwóch usług",
-              "price": "230,00 zł",
-              "duration": "2g"
-            },
-            {
-              "name": "Włosy długie",
               "price": "210,00 zł",
               "duration": "2g"
             },
@@ -155,6 +155,11 @@
             },
             {
               "name": "Włosy długie gęste",
+              "price": "230,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy długie",
               "price": "185,00 zł",
               "duration": "2g"
             }
@@ -192,12 +197,12 @@
         },
         {
           "name": "Chelatowanie włosów + rekonstrukcja włosów + repigmentacja + farbowanie docelowe",
-          "price": "300,00 zł",
+          "price": "280,00 zł+",
           "duration": "2g"
         },
         {
-          "name": "Włosy długie/gęste",
-          "price": "280,00 zł+",
+          "name": "Włosy średnie do ramion",
+          "price": "300,00 zł",
           "duration": "2g"
         },
         {
@@ -242,12 +247,12 @@
         },
         {
           "name": "Włosy długie",
-          "price": "450,00 zł+",
+          "price": "390,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Włosy długie/gęste",
-          "price": "390,00 zł+",
+          "name": "Włosy średnie",
+          "price": "450,00 zł+",
           "duration": "4g"
         },
         {
@@ -315,12 +320,12 @@
           "variants": [
             {
               "name": "Regeneracja botox to profesjonalny zabieg którego zadaniem jest intensywna odbudowa struktury każdego włosa, a także poprawa kondycji oraz dogłębna regeneracja. Polega on na wtłoczeniu w pasma składników odżywczych, które uzupełniają ubytki oraz uszkodzenia.",
-              "price": "180,00 zł",
+              "price": "200,00 zł",
               "duration": "1g 30min"
             },
             {
-              "name": "Włosy średnie",
-              "price": "200,00 zł",
+              "name": "Włosy długie",
+              "price": "180,00 zł",
               "duration": "1g 30min"
             }
           ]
@@ -362,12 +367,12 @@
         },
         {
           "name": "Włosy średnie (do ramion)",
-          "price": "600,00 zł+",
+          "price": "500,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Włosy długie/gęste",
-          "price": "500,00 zł+",
+          "name": "Włosy długie (poza ramiona)",
+          "price": "600,00 zł+",
           "duration": "4g"
         },
         {
