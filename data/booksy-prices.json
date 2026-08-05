@@ -1,6 +1,6 @@
 {
   "source": "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator",
-  "updated_at": "2026-08-04T07:47:45.368093+00:00",
+  "updated_at": "2026-08-05T07:49:14.257957+00:00",
   "categories": [
     {
       "name": "Popularne usługi",
@@ -59,12 +59,7 @@
               "duration": "6g"
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Usługi męskie",
-      "items": [
+        },
         {
           "name": "Strzyżenie męskie klasyczne",
           "price": "50,00 zł",
@@ -84,12 +79,7 @@
           "name": "Osiwienie dla mężczyzn - koloryzacja podkreśla naturalny kolor włosów bez sztucznych odcieni oraz odrostu. Efekt takiej koloryzacji utrzymuje się do 6 tygodni",
           "price": "40,00 zł",
           "duration": "15min"
-        }
-      ]
-    },
-    {
-      "name": "Usługi damskie",
-      "items": [
+        },
         {
           "name": "Strzyżenie damskie + mycie + stylizacja",
           "variants": [
@@ -134,12 +124,7 @@
               "duration": "1g"
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Koloryzacja",
-      "items": [
+        },
         {
           "name": "Koloryzacja włosów",
           "variants": [
@@ -309,12 +294,7 @@
               "duration": "3g"
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Zabiegi regenerujące włosy",
-      "items": [
+        },
         {
           "name": "Regeneracja włosów-botox",
           "variants": [
@@ -354,12 +334,7 @@
               "duration": "1g"
             }
           ]
-        }
-      ]
-    },
-    {
-      "name": "Prostowanie",
-      "items": [
+        },
         {
           "name": "Celem nanoplastii jest intensywne wygładzenie/wyprostowanie włosów, także bardzo kręconych, a efekt utrzymuje się nawet do roku czasu",
           "price": "450,00 zł+",
@@ -379,12 +354,7 @@
           "name": "Zadaniem bioplastii jest delikatne wyprostowanie włosów. Usługa ta jest szczególnie polecana osobom z falowanymi i niesfornymi włosami. Może być też wykonywana na włosach cienkichn i rozjaśnianych efekt utrzymuje się od 3-5 miesięcy",
           "price": "350,00 zł+",
           "duration": "3g"
-        }
-      ]
-    },
-    {
-      "name": "Fryzura okolicznościowa",
-      "items": [
+        },
         {
           "name": "Włosy powinny być umyte dzień wcześniej lub minimum 3 h przed wykonaniem usługi, bez używania żadnych olejków itp.",
           "price": "150,00 zł+",
@@ -404,12 +374,7 @@
           "name": "Włosy powinny być umyte dzień wcześniej lub minimum 3 h przed wykonaniem usługi, bez używania żadnych olejków itp.",
           "price": "220,00 zł+",
           "duration": "2g 30min"
-        }
-      ]
-    },
-    {
-      "name": "Trwała ondulacja",
-      "items": [
+        },
         {
           "name": "W cene i czas pracy wchodzi strzyżenie",
           "price": "230,00 zł",
