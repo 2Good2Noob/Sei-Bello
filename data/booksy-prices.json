@@ -1,6 +1,6 @@
 {
   "source": "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator",
-  "updated_at": "2026-09-05T09:06:35.003646+00:00",
+  "updated_at": "2026-09-06T09:27:22.010579+00:00",
   "categories": [
     {
       "name": "Popularne usługi",
@@ -135,22 +135,22 @@
           "variants": [
             {
               "name": "Koloryzacja + strzyżenie + stylizacja końcowa . W cenę i czas wchodzi strzyżenie, nie trzeba zaznaczać dwóch usług",
+              "price": "185,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy krótkie-do lini uszu",
+              "price": "230,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy długie",
               "price": "250,00 zł+",
               "duration": "2g"
             },
             {
               "name": "Włosy długie gęste",
               "price": "210,00 zł",
-              "duration": "2g"
-            },
-            {
-              "name": "Włosy średnie - do ramion",
-              "price": "230,00 zł",
-              "duration": "2g"
-            },
-            {
-              "name": "Włosy długie",
-              "price": "185,00 zł",
               "duration": "2g"
             },
             {
@@ -175,24 +175,24 @@
             },
             {
               "name": "Włosy średnie do ramion",
-              "price": "700,00 zł+",
+              "price": "600,00 zł+",
               "duration": "5g 30min"
             },
             {
-              "name": "Włosy długie bardzo gęste",
-              "price": "600,00 zł+",
+              "name": "Włosy długie",
+              "price": "700,00 zł+",
               "duration": "5g 30min"
             }
           ]
         },
         {
           "name": "Chelatowanie włosów + rekonstrukcja włosów + repigmentacja + farbowanie docelowe",
-          "price": "300,00 zł",
+          "price": "280,00 zł+",
           "duration": "2g"
         },
         {
-          "name": "Włosy długie/gęste",
-          "price": "280,00 zł+",
+          "name": "Włosy średnie do ramion",
+          "price": "300,00 zł",
           "duration": "2g"
         },
         {
@@ -217,11 +217,6 @@
         },
         {
           "name": "Rozjaśnianie odrost - włosy krótkie",
-          "price": "350,00 zł+",
-          "duration": "4g"
-        },
-        {
-          "name": "Rozjaśnianie odrost-włosy średnie",
           "price": "420,00 zł+",
           "duration": "4g"
         },
@@ -231,23 +226,28 @@
           "duration": "4g"
         },
         {
-          "name": "Cena zaczyna się OD",
-          "price": "420,00 zł+",
+          "name": "Rozjaśnianie odrost- włosy długię/gęste",
+          "price": "350,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Włosy długie",
+          "name": "Cena zaczyna się OD",
           "price": "390,00 zł+",
           "duration": "4g"
         },
         {
           "name": "Włosy średnie",
+          "price": "450,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy długie/gęste",
           "price": "420,00 zł+",
           "duration": "4g"
         },
         {
           "name": "Refleksy włosy średnie (gęste)",
-          "price": "450,00 zł+",
+          "price": "420,00 zł+",
           "duration": "4g"
         },
         {
@@ -270,16 +270,16 @@
             },
             {
               "name": "Rozjaśnianie włosów+farbowanie+ochrona OLAPLEX+strzyżenie/stylizacja",
-              "price": "450,00 zł+",
-              "duration": "4g"
-            },
-            {
-              "name": "Włosy długie",
               "price": "420,00 zł+",
               "duration": "4g"
             },
             {
               "name": "Włosy średnie",
+              "price": "450,00 zł+",
+              "duration": "4g"
+            },
+            {
+              "name": "Włosy długie",
               "price": "480,00 zł+",
               "duration": "4g 30min"
             }
@@ -340,12 +340,12 @@
             },
             {
               "name": "Po koloryzacji włosów silna regeneracja włosów -PRO REPAIR COMBO profesjonalny zabieg odbudowujący włókno włosa od wewnątrz. Dzięki keratynie i kompleksowi aminokwasów uzupełnia ubytki w strukturze, wzmacnia włosy i przywraca im elastyczność oraz zdrowy połysk.",
-              "price": "180,00 zł",
+              "price": "210,00 zł",
               "duration": "1g"
             },
             {
-              "name": "Włosy średnie",
-              "price": "210,00 zł",
+              "name": "Włosy długie",
+              "price": "180,00 zł",
               "duration": "1g"
             }
           ]
@@ -362,12 +362,12 @@
         },
         {
           "name": "Włosy średnie (do ramion)",
-          "price": "600,00 zł+",
+          "price": "500,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Włosy długie/gęste",
-          "price": "500,00 zł+",
+          "name": "Włosy długie (poza ramiona)",
+          "price": "600,00 zł+",
           "duration": "4g"
         },
         {
