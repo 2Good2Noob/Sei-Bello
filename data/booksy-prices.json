@@ -1,6 +1,6 @@
 {
   "source": "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator",
-  "updated_at": "2026-09-15T10:06:08.472483+00:00",
+  "updated_at": "2026-09-16T09:58:07.439578+00:00",
   "categories": [
     {
       "name": "Popularne usługi",
@@ -15,16 +15,16 @@
           "variants": [
             {
               "name": "Dla włosów sięgających poniżej ramion.",
-              "price": "70,00 zł",
-              "duration": "1g"
-            },
-            {
-              "name": "Strzyżenie damskie - włosy krótkie(do lini uszu)",
               "price": "80,00 zł",
               "duration": "1g"
             },
             {
               "name": "Strzyżenie damskie - włosy średnie/długie",
+              "price": "70,00 zł",
+              "duration": "1g"
+            },
+            {
+              "name": "Strzyżenie damskie - włosy krótkie(do lini uszu)",
               "price": "100,00 zł",
               "duration": "1g 30min"
             }
@@ -35,11 +35,11 @@
           "variants": [
             {
               "name": "Koloryzacja + strzyżenie + stylizacja końcowa . W cenę i czas wchodzi strzyżenie, nie trzeba zaznaczać dwóch usług",
-              "price": "210,00 zł",
+              "price": "250,00 zł+",
               "duration": "2g"
             },
             {
-              "name": "Włosy średnie - do ramion",
+              "name": "Włosy długie gęste",
               "price": "185,00 zł",
               "duration": "2g"
             },
@@ -50,11 +50,11 @@
             },
             {
               "name": "Włosy długie",
-              "price": "250,00 zł+",
+              "price": "210,00 zł",
               "duration": "2g"
             },
             {
-              "name": "Włosy długie gęste",
+              "name": "Włosy średnie - do ramion",
               "price": "220,00 zł+",
               "duration": "2g"
             }
@@ -95,16 +95,16 @@
           "variants": [
             {
               "name": "Dla włosów sięgających poniżej ramion.",
-              "price": "70,00 zł",
-              "duration": "1g"
-            },
-            {
-              "name": "Strzyżenie damskie - włosy krótkie(do lini uszu)",
               "price": "80,00 zł",
               "duration": "1g"
             },
             {
               "name": "Strzyżenie damskie - włosy średnie/długie",
+              "price": "70,00 zł",
+              "duration": "1g"
+            },
+            {
+              "name": "Strzyżenie damskie - włosy krótkie(do lini uszu)",
               "price": "100,00 zł",
               "duration": "1g 30min"
             },
@@ -130,12 +130,12 @@
             },
             {
               "name": "Mycie+modelowanie/prostowanie",
-              "price": "70,00 zł+",
+              "price": "60,00 zł+",
               "duration": "1g"
             },
             {
-              "name": "Włosy średnie/długie",
-              "price": "60,00 zł+",
+              "name": "Włosy krótkie",
+              "price": "70,00 zł+",
               "duration": "1g"
             }
           ]
@@ -150,11 +150,11 @@
           "variants": [
             {
               "name": "Koloryzacja + strzyżenie + stylizacja końcowa . W cenę i czas wchodzi strzyżenie, nie trzeba zaznaczać dwóch usług",
-              "price": "210,00 zł",
+              "price": "250,00 zł+",
               "duration": "2g"
             },
             {
-              "name": "Włosy średnie - do ramion",
+              "name": "Włosy długie gęste",
               "price": "185,00 zł",
               "duration": "2g"
             },
@@ -165,11 +165,11 @@
             },
             {
               "name": "Włosy długie",
-              "price": "250,00 zł+",
+              "price": "210,00 zł",
               "duration": "2g"
             },
             {
-              "name": "Włosy długie gęste",
+              "name": "Włosy średnie - do ramion",
               "price": "220,00 zł+",
               "duration": "2g"
             },
@@ -195,24 +195,24 @@
             },
             {
               "name": "Włosy średnie do ramion",
-              "price": "700,00 zł+",
+              "price": "600,00 zł+",
               "duration": "5g 30min"
             },
             {
-              "name": "Włosy długie bardzo gęste",
-              "price": "600,00 zł+",
+              "name": "Włosy długie",
+              "price": "700,00 zł+",
               "duration": "5g 30min"
             }
           ]
         },
         {
           "name": "Chelatowanie włosów + rekonstrukcja włosów + repigmentacja + farbowanie docelowe",
-          "price": "280,00 zł+",
+          "price": "300,00 zł",
           "duration": "2g"
         },
         {
-          "name": "Włosy średnie do ramion",
-          "price": "300,00 zł",
+          "name": "Włosy długie/gęste",
+          "price": "280,00 zł+",
           "duration": "2g"
         },
         {
@@ -237,6 +237,11 @@
         },
         {
           "name": "Rozjaśnianie odrost - włosy krótkie",
+          "price": "450,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Rozjaśnianie odrost- włosy długię/gęste",
           "price": "420,00 zł+",
           "duration": "4g"
         },
@@ -246,28 +251,23 @@
           "duration": "4g"
         },
         {
-          "name": "Rozjaśnianie odrost-włosy średnie",
-          "price": "450,00 zł+",
-          "duration": "4g"
-        },
-        {
           "name": "Cena zaczyna się OD",
-          "price": "390,00 zł+",
+          "price": "420,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Włosy średnie",
+          "name": "Refleksy włosy średnie (gęste)",
           "price": "420,00 zł+",
           "duration": "4g"
         },
         {
           "name": "Włosy długie",
-          "price": "450,00 zł+",
+          "price": "390,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Włosy długie/gęste",
-          "price": "420,00 zł+",
+          "name": "Włosy średnie",
+          "price": "450,00 zł+",
           "duration": "4g"
         },
         {
@@ -290,16 +290,16 @@
             },
             {
               "name": "Rozjaśnianie włosów+farbowanie+ochrona OLAPLEX+strzyżenie/stylizacja",
-              "price": "450,00 zł+",
-              "duration": "4g"
-            },
-            {
-              "name": "Włosy długie",
               "price": "420,00 zł+",
               "duration": "4g"
             },
             {
               "name": "Włosy średnie",
+              "price": "450,00 zł+",
+              "duration": "4g"
+            },
+            {
+              "name": "Włosy długie",
               "price": "480,00 zł+",
               "duration": "4g 30min"
             }
@@ -310,12 +310,12 @@
           "variants": [
             {
               "name": "Rozjaśnianie włosów metodą niteczkową+tonowanie+ochrona OLAPLEX+strzyżenie/stylizacja",
-              "price": "420,00 zł+",
+              "price": "450,00 zł",
               "duration": "4g"
             },
             {
-              "name": "Beleyage - włosy średnie",
-              "price": "450,00 zł",
+              "name": "Baleyage - włosy gęste",
+              "price": "420,00 zł+",
               "duration": "4g"
             },
             {
@@ -360,12 +360,12 @@
             },
             {
               "name": "Po koloryzacji włosów silna regeneracja włosów -PRO REPAIR COMBO profesjonalny zabieg odbudowujący włókno włosa od wewnątrz. Dzięki keratynie i kompleksowi aminokwasów uzupełnia ubytki w strukturze, wzmacnia włosy i przywraca im elastyczność oraz zdrowy połysk.",
-              "price": "180,00 zł",
+              "price": "210,00 zł",
               "duration": "1g"
             },
             {
-              "name": "Włosy średnie",
-              "price": "210,00 zł",
+              "name": "Włosy długie",
+              "price": "180,00 zł",
               "duration": "1g"
             }
           ]
@@ -382,12 +382,12 @@
         },
         {
           "name": "Włosy średnie (do ramion)",
-          "price": "500,00 zł+",
+          "price": "600,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Włosy długie (poza ramiona)",
-          "price": "600,00 zł+",
+          "name": "Włosy długie/gęste",
+          "price": "500,00 zł+",
           "duration": "4g"
         },
         {
