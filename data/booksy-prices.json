@@ -1,6 +1,6 @@
 {
   "source": "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator",
-  "updated_at": "2026-09-25T10:12:48.033881+00:00",
+  "updated_at": "2026-09-26T09:53:12.694663+00:00",
   "categories": [
     {
       "name": "Popularne usługi",
@@ -9,36 +9,6 @@
           "name": "Strzyżenie męskie klasyczne",
           "price": "50,00 zł",
           "duration": "30min"
-        },
-        {
-          "name": "Koloryzacja włosów",
-          "variants": [
-            {
-              "name": "Koloryzacja + strzyżenie + stylizacja końcowa . W cenę i czas wchodzi strzyżenie, nie trzeba zaznaczać dwóch usług",
-              "price": "210,00 zł",
-              "duration": "2g"
-            },
-            {
-              "name": "Włosy średnie - do ramion",
-              "price": "250,00 zł+",
-              "duration": "2g"
-            },
-            {
-              "name": "Włosy długie gęste",
-              "price": "220,00 zł+",
-              "duration": "2g"
-            },
-            {
-              "name": "Koloryzacja włosów - podwójne nakładanie farby",
-              "price": "230,00 zł",
-              "duration": "2g"
-            },
-            {
-              "name": "Włosy długie",
-              "price": "185,00 zł",
-              "duration": "2g"
-            }
-          ]
         },
         {
           "name": "Strzyżenie damskie + mycie + stylizacja",
@@ -57,6 +27,36 @@
               "name": "Strzyżenie damskie - włosy średnie/długie",
               "price": "100,00 zł",
               "duration": "1g 30min"
+            }
+          ]
+        },
+        {
+          "name": "Koloryzacja włosów",
+          "variants": [
+            {
+              "name": "Koloryzacja + strzyżenie + stylizacja końcowa . W cenę i czas wchodzi strzyżenie, nie trzeba zaznaczać dwóch usług",
+              "price": "250,00 zł+",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy długie gęste",
+              "price": "230,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy długie",
+              "price": "220,00 zł+",
+              "duration": "2g"
+            },
+            {
+              "name": "Koloryzacja włosów - podwójne nakładanie farby",
+              "price": "210,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy średnie - do ramion",
+              "price": "185,00 zł",
+              "duration": "2g"
             }
           ]
         }
@@ -150,40 +150,40 @@
           "variants": [
             {
               "name": "Koloryzacja + strzyżenie + stylizacja końcowa . W cenę i czas wchodzi strzyżenie, nie trzeba zaznaczać dwóch usług",
-              "price": "210,00 zł",
-              "duration": "2g"
-            },
-            {
-              "name": "Włosy średnie - do ramion",
               "price": "250,00 zł+",
               "duration": "2g"
             },
             {
               "name": "Włosy długie gęste",
-              "price": "220,00 zł+",
-              "duration": "2g"
-            },
-            {
-              "name": "Koloryzacja włosów - podwójne nakładanie farby",
               "price": "230,00 zł",
               "duration": "2g"
             },
             {
               "name": "Włosy długie",
+              "price": "220,00 zł+",
+              "duration": "2g"
+            },
+            {
+              "name": "Koloryzacja włosów - podwójne nakładanie farby",
+              "price": "210,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy średnie - do ramion",
               "price": "185,00 zł",
               "duration": "2g"
             },
             {
-              "name": "Koloryzacja-odrost",
+              "name": "Koloryzacja bez rozjaśniania.",
               "price": "180,00 zł",
               "duration": "1g 30min"
+            },
+            {
+              "name": "Koloryzacja odrostu",
+              "price": "200,00 zł",
+              "duration": "2g"
             }
           ]
-        },
-        {
-          "name": "Farbowanie-odrost",
-          "price": "200,00 zł",
-          "duration": "2g"
         },
         {
           "name": "Metamorfoza koloru",
@@ -195,12 +195,12 @@
             },
             {
               "name": "Włosy średnie do ramion",
-              "price": "700,00 zł+",
+              "price": "600,00 zł+",
               "duration": "5g 30min"
             },
             {
-              "name": "Włosy długie bardzo gęste",
-              "price": "600,00 zł+",
+              "name": "Włosy długie",
+              "price": "700,00 zł+",
               "duration": "5g 30min"
             }
           ]
@@ -242,12 +242,12 @@
         },
         {
           "name": "Rozjaśnianie odrost-włosy dlugie",
-          "price": "350,00 zł+",
+          "price": "450,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Rozjaśnianie odrost-włosy średnie",
-          "price": "450,00 zł+",
+          "name": "Rozjaśnianie odrost- włosy długię/gęste",
+          "price": "350,00 zł+",
           "duration": "4g"
         },
         {
@@ -256,18 +256,18 @@
           "duration": "4g"
         },
         {
-          "name": "Refleksy włosy średnie (gęste)",
-          "price": "420,00 zł+",
+          "name": "Włosy długie",
+          "price": "390,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Włosy długie",
+          "name": "Włosy średnie",
           "price": "450,00 zł+",
           "duration": "4g"
         },
         {
           "name": "Włosy długie/gęste",
-          "price": "390,00 zł+",
+          "price": "420,00 zł+",
           "duration": "4g"
         },
         {
@@ -275,16 +275,16 @@
           "variants": [
             {
               "name": "Rozjaśnianie całych włosów+farbowanie+ochrona OLAPLEX+strzyżenie/stylizacja",
-              "price": "450,00 zł+",
-              "duration": "4g"
-            },
-            {
-              "name": "Włosy długie",
               "price": "420,00 zł+",
               "duration": "4g"
             },
             {
               "name": "Włosy średnie",
+              "price": "450,00 zł+",
+              "duration": "4g"
+            },
+            {
+              "name": "Włosy długie",
               "price": "500,00 zł+",
               "duration": "5g"
             },
@@ -350,12 +350,12 @@
           "variants": [
             {
               "name": "To idealna terapia dla włosów osłabionych, po koloryzacji i rozjaśnianiu – dla wszystkich, którzy chcą realnej regeneracji, a nie tylko chwilowego efektu.",
-              "price": "280,00 zł",
+              "price": "250,00 zł+",
               "duration": "2g"
             },
             {
-              "name": "Włosy długie",
-              "price": "250,00 zł+",
+              "name": "Włosy średnie (do ramion)",
+              "price": "280,00 zł",
               "duration": "2g"
             },
             {
@@ -376,18 +376,18 @@
       "name": "Prostowanie",
       "items": [
         {
-          "name": "Celem nanoplastii jest intensywne wygładzenie/wyprostowanie włosów, także bardzo kręconych, a efekt utrzymuje się nawet do roku czasu",
+          "name": "W czas i cene wchodzi strzyżenie ! Prosimy o nie zaznaczanie kolejnej usługi ! Celem nanoplastii jest intensywne wygładzenie/wyprostowanie włosów, także bardzo kręconych, a efekt utrzymuje się nawet do roku czasu",
           "price": "450,00 zł+",
           "duration": "3g"
         },
         {
           "name": "Włosy średnie (do ramion)",
-          "price": "500,00 zł+",
+          "price": "600,00 zł+",
           "duration": "4g"
         },
         {
-          "name": "Włosy długie (poza ramiona)",
-          "price": "600,00 zł+",
+          "name": "Włosy długie/gęste",
+          "price": "500,00 zł+",
           "duration": "4g"
         },
         {
