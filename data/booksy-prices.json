@@ -1,6 +1,6 @@
 {
   "source": "https://booksy.com/pl-pl/214823_sei-bello-studio-pielegnacji-wlosow_fryzjer_10172_zator",
-  "updated_at": "2026-10-27T10:36:36.678450+00:00",
+  "updated_at": "2026-10-28T11:21:30.062908+00:00",
   "categories": [
     {
       "name": "Popularne usługi",
@@ -15,6 +15,11 @@
           "variants": [
             {
               "name": "Koloryzacja + strzyżenie + stylizacja końcowa . W cenę i czas wchodzi strzyżenie, nie trzeba zaznaczać dwóch usług",
+              "price": "250,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Koloryzacja włosów - podwójne nakładanie farby włosy gęste",
               "price": "230,00 zł",
               "duration": "2g"
             },
@@ -30,17 +35,12 @@
             },
             {
               "name": "Włosy długie gęste",
-              "price": "250,00 zł",
-              "duration": "2g"
-            },
-            {
-              "name": "Koloryzacja włosów - podwójne nakładanie farby włosy gęste",
-              "price": "220,00 zł+",
-              "duration": "2g"
-            },
-            {
-              "name": "Koloryzacja włosów - podwójne nakładanie farby",
               "price": "210,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy średnie - do ramion",
+              "price": "220,00 zł+",
               "duration": "2g"
             }
           ]
@@ -50,16 +50,16 @@
           "variants": [
             {
               "name": "Dla włosów sięgających poniżej ramion.",
-              "price": "70,00 zł",
-              "duration": "1g"
-            },
-            {
-              "name": "Strzyżenie damskie - włosy krótkie(do lini uszu)",
               "price": "80,00 zł",
               "duration": "1g"
             },
             {
               "name": "Strzyżenie damskie - włosy średnie/długie",
+              "price": "70,00 zł",
+              "duration": "1g"
+            },
+            {
+              "name": "Strzyżenie damskie - włosy krótkie(do lini uszu)",
               "price": "100,00 zł",
               "duration": "1g 30min"
             }
@@ -100,16 +100,16 @@
           "variants": [
             {
               "name": "Dla włosów sięgających poniżej ramion.",
-              "price": "70,00 zł",
-              "duration": "1g"
-            },
-            {
-              "name": "Strzyżenie damskie - włosy krótkie(do lini uszu)",
               "price": "80,00 zł",
               "duration": "1g"
             },
             {
               "name": "Strzyżenie damskie - włosy średnie/długie",
+              "price": "70,00 zł",
+              "duration": "1g"
+            },
+            {
+              "name": "Strzyżenie damskie - włosy krótkie(do lini uszu)",
               "price": "100,00 zł",
               "duration": "1g 30min"
             },
@@ -155,6 +155,11 @@
           "variants": [
             {
               "name": "Koloryzacja + strzyżenie + stylizacja końcowa . W cenę i czas wchodzi strzyżenie, nie trzeba zaznaczać dwóch usług",
+              "price": "250,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Koloryzacja włosów - podwójne nakładanie farby włosy gęste",
               "price": "230,00 zł",
               "duration": "2g"
             },
@@ -170,17 +175,12 @@
             },
             {
               "name": "Włosy długie gęste",
-              "price": "250,00 zł",
-              "duration": "2g"
-            },
-            {
-              "name": "Koloryzacja włosów - podwójne nakładanie farby włosy gęste",
-              "price": "220,00 zł+",
-              "duration": "2g"
-            },
-            {
-              "name": "Koloryzacja włosów - podwójne nakładanie farby",
               "price": "210,00 zł",
+              "duration": "2g"
+            },
+            {
+              "name": "Włosy średnie - do ramion",
+              "price": "220,00 zł+",
               "duration": "2g"
             },
             {
@@ -205,12 +205,12 @@
             },
             {
               "name": "Włosy średnie do ramion",
-              "price": "700,00 zł+",
+              "price": "600,00 zł+",
               "duration": "5g 30min"
             },
             {
-              "name": "Włosy długie bardzo gęste",
-              "price": "600,00 zł+",
+              "name": "Włosy długie",
+              "price": "700,00 zł+",
               "duration": "5g 30min"
             }
           ]
@@ -247,6 +247,11 @@
         },
         {
           "name": "Rozjaśnianie odrost - włosy krótkie",
+          "price": "350,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Rozjaśnianie odrost-włosy średnie",
           "price": "420,00 zł+",
           "duration": "4g"
         },
@@ -256,22 +261,7 @@
           "duration": "4g"
         },
         {
-          "name": "Rozjaśnianie odrost- włosy długię/gęste",
-          "price": "350,00 zł+",
-          "duration": "4g"
-        },
-        {
           "name": "Cena zaczyna się OD",
-          "price": "420,00 zł+",
-          "duration": "4g"
-        },
-        {
-          "name": "Refleksy włosy średnie (gęste)",
-          "price": "420,00 zł+",
-          "duration": "4g"
-        },
-        {
-          "name": "Włosy długie",
           "price": "390,00 zł+",
           "duration": "4g"
         },
@@ -281,20 +271,30 @@
           "duration": "4g"
         },
         {
+          "name": "Włosy długie/gęste",
+          "price": "420,00 zł+",
+          "duration": "4g"
+        },
+        {
+          "name": "Włosy długie",
+          "price": "420,00 zł+",
+          "duration": "4g"
+        },
+        {
           "name": "Dekoloryzacja włosów",
           "variants": [
             {
               "name": "Rozjaśnianie całych włosów+farbowanie+ochrona OLAPLEX+strzyżenie/stylizacja",
-              "price": "420,00 zł+",
-              "duration": "4g"
-            },
-            {
-              "name": "Włosy średnie",
               "price": "450,00 zł+",
               "duration": "4g"
             },
             {
               "name": "Włosy długie",
+              "price": "420,00 zł+",
+              "duration": "4g"
+            },
+            {
+              "name": "Włosy średnie",
               "price": "500,00 zł+",
               "duration": "5g"
             },
@@ -320,12 +320,12 @@
           "variants": [
             {
               "name": "Rozjaśnianie włosów metodą niteczkową+tonowanie+ochrona OLAPLEX+strzyżenie/stylizacja",
-              "price": "420,00 zł+",
+              "price": "450,00 zł",
               "duration": "4g"
             },
             {
-              "name": "Beleyage - włosy średnie",
-              "price": "450,00 zł",
+              "name": "Baleyage - włosy gęste",
+              "price": "420,00 zł+",
               "duration": "4g"
             },
             {
@@ -360,12 +360,12 @@
           "variants": [
             {
               "name": "To idealna terapia dla włosów osłabionych, po koloryzacji i rozjaśnianiu – dla wszystkich, którzy chcą realnej regeneracji, a nie tylko chwilowego efektu.",
-              "price": "250,00 zł+",
+              "price": "280,00 zł",
               "duration": "2g"
             },
             {
-              "name": "Włosy średnie (do ramion)",
-              "price": "280,00 zł",
+              "name": "Włosy długie",
+              "price": "250,00 zł+",
               "duration": "2g"
             },
             {
